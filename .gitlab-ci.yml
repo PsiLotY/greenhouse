@@ -1,12 +1,6 @@
-image: "python:3.10"
-
-before_script:
-  - python --version
-
-stages:
-  - Static Analysis
-
-flake8:
-  stage: Static Analysis
+run_tests:
+  image: python:3.10-bullseye
+  before_script:
+    - pip install flake8 pytest pytest-cov
   script:
-  - flake8 --max-line-length=120 bild/*.py
+    - pytest -v --cov
