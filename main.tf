@@ -1,4 +1,6 @@
 terraform {
+  backend "http"{
+  }
   required_providers {
     tls = {
       source  = "hashicorp/tls"
