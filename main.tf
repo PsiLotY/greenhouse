@@ -1,81 +1,43 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.16"
-    }
-  }
-  
-  required_version = ">= 1.2.0"
-}
-
+# Define your AWS provider configuration
 provider "aws" {
-  region     = "eu-central-1"
-  access_key = "insert access_key"
-  secret_key = "insert secret_key"
+  region = "eu-central-1" 
 }
 
-# Resources are AWS services
-resource "aws_iot_thing" "iot_thing" {
-  name = "thing"
+# Create an AWS IoT thing
+resource "aws_iot_thing" "my_thing" {
+  name = "my-thing"
 }
 
-resource "aws_iot_topic_rule" "rule" {
-  name        = "MyRule"
-  description = "This is an example rule"
-  enabled     = true
-  sql         = "SELECT * FROM 'topic/test'"
-  sql_version = "2016-03-23" # This is the default version automatically set by AWS
-  rule_disabled = false
-  
-  action {
-    dynamodb {
-      table_name      = "my-dynamodb-table"
-      role_arn        = "arn:aws:iam::123456789012:role/my-iot-role" #just an example role
-      hash_key_field  = "topic"
-      hash_key_value  = "${topic(2)}"
-      range_key_field = "timestamp"
-      range_key_value = "${timestamp()}"
-    }
-  }
-}
+# Create an AWS IoT policy
+resource "aws_iot_policy" "my_policy" {
+  name = "my-policy"
 
-resource "aws_iotevents_detector_model" "my_detector" {
-  name             = "my-detector"
-  role_arn         = "arn:aws:iam::123456789012:role/my-iot-role"
-  detector_model_definition = <<EOF
+  policy = <<EOF
 {
-  "states": {
-    "state1": {
-      "type": "InitialState",
-      "onInput": {
-        "events": [
-          {
-            "eventName": "my-input",
-            "condition": "TRUE"
-          }
-        ]
-      },
-      "transition": {
-        "nextState": "state2"
-      }
-    },
-    "state2": {
-      "type": "OnInput",
-      "onInput": {
-        "events": [
-          {
-            "eventName": "my-input",
-            "condition": "TRUE"
-          }
-        ]
-      },
-      "transition": {
-        "nextState": "state1"
-      }
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "iot:*",
+      "Resource": "*"
     }
-  }
+  ]
 }
 EOF
-#End Of File 
+}
+
+# Create an AWS IoT certificate
+resource "aws_iot_certificate" "my_certificate" {
+  active = true
+}
+
+# Attach the certificate to the thing
+resource "aws_iot_thing_principal_attachment" "my_attachment" {
+  thing_name      = aws_iot_thing.my_thing.name
+  principal       = aws_iot_certificate.my_certificate.arn
+}
+
+# Output the certificate ARN
+output "certificate_arn" {
+  value = aws_iot_certificate.my_certificate.arn
 }
