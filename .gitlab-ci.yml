@@ -25,7 +25,7 @@ run_tests:
   before_script:
     - curl -O https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
     - unzip terraform_${TF_VERSION}_linux_amd64.zip
-    - sudo mv terraform /usr/local/bin/
+    - mv terraform /usr/local/bin/
     - terraform version
 
 validate:
