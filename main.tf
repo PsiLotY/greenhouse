@@ -1,6 +1,6 @@
 # Define your AWS provider configuration
 provider "aws" {
-  region = "eu-central-1" 
+  region = "eu-central-1"  # Replace with your desired region
 }
 
 # Create an AWS IoT thing
@@ -32,9 +32,9 @@ resource "aws_iot_certificate" "my_certificate" {
 }
 
 # Attach the certificate to the thing
-resource "aws_iot_thing_principal_attachment" "my_attachment" {
-  thing_name      = aws_iot_thing.my_thing.name
-  principal       = aws_iot_certificate.my_certificate.arn
+resource "aws_iot_policy_attachment" "my_attachment" {
+  policy_name = aws_iot_policy.my_policy.name
+  target      = aws_iot_certificate.my_certificate.arn
 }
 
 # Output the certificate ARN
