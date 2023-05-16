@@ -2,4 +2,4 @@
 
 paho-mqtt==1.6.1
 git+https://gitlab.mi.hdm-stuttgart.de/iotee/python-iotee.git
-terraform==1.2.0
+terraform==1.4.6
