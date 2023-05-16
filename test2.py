@@ -24,14 +24,6 @@ def on_publish(client, userdata, mid):
 iotee = iotee.Iotee("COM7")
 iotee.start()
     
-def connect_aws():
-    client = mqtt.Client()
-    client.tls_set(root_ca,
-                   certfile = public_crt,
-                   keyfile = private_key,
-                   cert_reqs = ssl.CERT_REQUIRED,
-                   tls_version = ssl.PROTOCOL_TLSv1_2,
-                   ciphers = None)
 
 if __name__ == "__main__":
     print ("Loaded MQTT configuration information.")    
@@ -40,7 +32,13 @@ if __name__ == "__main__":
     print ("Device Cert: " + public_crt)
     print ("Private Key: " + private_key)
 
-    client = connect_aws()
+    client = mqtt.Client()
+    client.tls_set(root_ca,
+                   certfile = public_crt,
+                   keyfile = private_key,
+                   cert_reqs = ssl.CERT_REQUIRED,
+                   tls_version = ssl.PROTOCOL_TLSv1_2,
+                   ciphers = None)
     client.on_connect = on_connect
     client.on_publish = on_publish
 
