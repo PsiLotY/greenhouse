@@ -1,4 +1,21 @@
-image: python:3.10-bullseye
+run_tests:
+  image: python:3.10-bullseye
+  before_script:
+    - pip install flake8 pytest pytest-cov
+    - pip install -r requirements.txt
+  script:
+    - pytest -v --cov
+
+.include_terraform_template: &include_terraform_template
+  before_script:
+    - curl -O https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+    - unzip terraform_${TF_VERSION}_linux_amd64.zip
+    - mv terraform /usr/local/bin/
+    - terraform version
+
+include:
+  - template: Terraform/Base.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.gitlab-ci.yml
 
 stages:
   - validate
@@ -8,42 +25,32 @@ stages:
   - cleanup
 
 variables:
-  TF_VERSION: "1.4.6"
-  TF_STATE_NAME: "default"
-  TF_CACHE_KEY: "default"
-
-before_script:
-  - pip install flake8 pytest pytest-cov
-  - pip install -r requirements.txt
-
-run_tests:
-  stage: test
-  script:
-    - pytest -v --cov
-
-validate:
-  stage: validate
-  script:
-    - terraform init
-    - terraform validate
+  TF_VERSION: "1.2.0"
+  TF_STATE_NAME: default
+  TF_CACHE_KEY: default
 
 fmt:
-  stage: validate
-  script:
-    - terraform fmt -check
+  extends:
+    - .terraform:fmt
+    - .include_terraform_template
+  needs: []
+
+validate:
+  extends:
+    - .terraform:validate
+    - .include_terraform_template
+  needs: []
 
 build:
-  stage: build
-  script:
-    - terraform init
-    - terraform plan
+  extends:
+    - .terraform:build
+    - .include_terraform_template
 
 deploy:
-  stage: deploy
-  script:
-    - terraform apply -auto-approve
-
-cleanup:
-  stage: cleanup
-  script:
-    - terraform destroy -auto-approve
+  extends:
+    - .terraform:deploy
+    - .include_terraform_template
+  dependencies:
+    - build
+  environment:
+    name: $TF_STATE_NAME
