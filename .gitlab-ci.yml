@@ -30,7 +30,6 @@ run_tests:
 
 terraform_init:
   extends:
-    - terraform:init
     - .include_terraform_template
   script:
     - terraform init
