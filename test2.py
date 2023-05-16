@@ -20,8 +20,11 @@ def on_connect(client, userdata, flags, response_code):
     print("Connected with status: {0}".format(response_code))
 
 def on_publish(client, userdata, mid):
-    print (userdata + " -- " + mid)
+    print (userdata, " -- ", mid)
 
+iotee = iotee.Iotee("COM7")
+iotee.start()
+        
 
 if __name__ == "__main__":
     print ("Loaded MQTT configuration information.")    
@@ -65,45 +68,23 @@ if __name__ == "__main__":
                             }
                         ]
                         }"""
-                        
 
-    while True:
-        sleep(0.5)
-        print (connflag)
+
+    while(True):
+        print("Request")
+        temperature = iotee.request_temperature()
+        humidity = iotee.request_humidity()
+        light = iotee.request_light()
+        proximity = iotee.request_proximity()
+        print("-----")
+        sleep(1)
         if connflag == True:
             print ("Publishing...")
-            ap_measurement = random.uniform(25.0, 150.0)
-            timestamp = str(datetime.datetime.now())
-            temp = random.uniform(20.0, 30.0)
-            message = '{"timestamp":'+'"'+str(timestamp)+'",'+'"temperature":'+str(temp)+'}'
-            
             data = json.loads(message)
-            data['messages'][0]['payload']['motorId'] = 1   
             data['messages'][0]['payload']['sensorData']['pressure'] = 20
-            data['messages'][0]['payload']['sensorData']['temperature'] = random.uniform(20.0, 30.0)
-            print(data['messages'][0]['payload']['sensorData']['temperature'])  
+            data['messages'][0]['payload']['sensorData']['temperature'] = temperature
             json.dumps(message)
             client.publish("message_test", message, qos=1)
             sleep(5)
         else:
             print ("waiting for connection...")
-
-
-
-
-class Loop(Thread):
-    def run(self):
-
-        while(True):
-            print("Request")
-            iotee.request_temperature()
-            iotee.request_humidity()
-            iotee.request_light()
-            iotee.request_proximity()
-            print("-----")
-            sleep(1)
-iotee = iotee.Iotee("COM7")
-
-loop = Loop()
- 
-loop.start()
