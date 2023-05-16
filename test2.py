@@ -5,6 +5,16 @@ import datetime
 import json
 import iotee
 import config
+from iotee import Iotee
+import signal
+import sys
+
+def signal_handler(signal, frame):
+    print('Shutting down')
+    iotee.stop()
+    sys.exit(0)
+    
+signal.signal(signal.SIGINT, signal_handler)
 
 mqtt_url = config.mqtt_url
 root_ca = config.root_ca
@@ -21,31 +31,8 @@ def on_connect(client, userdata, flags, response_code):
 def on_publish(client, userdata, mid):
     print (userdata, " -- ", mid)
 
-iotee = iotee.Iotee("COM7")
-iotee.start()
-    
 
-if __name__ == "__main__":
-    print ("Loaded MQTT configuration information.")    
-    print ("Endpoint URL: " + mqtt_url)
-    print ("Root Cert: " + root_ca)
-    print ("Device Cert: " + public_crt)
-    print ("Private Key: " + private_key)
-
-    client = mqtt.Client()
-    client.tls_set(root_ca,
-                   certfile = public_crt,
-                   keyfile = private_key,
-                   cert_reqs = ssl.CERT_REQUIRED,
-                   tls_version = ssl.PROTOCOL_TLSv1_2,
-                   ciphers = None)
-    client.on_connect = on_connect
-    client.on_publish = on_publish
-
-    print ("Connecting to AWS IoT Broker...")
-    client.connect(mqtt_url, port = 8883, keepalive=60)
-    client.loop_start()
-    message = """{"messages": [{
+message = """{"messages": [{
                             "inputName": "test",
                             "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
                             "payload": {
@@ -65,20 +52,56 @@ if __name__ == "__main__":
                             }
                         ]
                         }"""
+data = json.loads(message)
+print(data['messages'][0]['payload']['sensorData']['temperature'])
+
+# iotee part
+iotee = iotee.Iotee("COM7")
+iotee.start()
+class MyIotee(Iotee):
+    def on_temperature(self, value):
+        data['messages'][0]['payload']['sensorData']['temperature'] = value
+        print(data['messages'][0]['payload']['sensorData']['temperature'])
+        print("temperature: {:.2f}".format(value))
+
+    def on_humidity(self, value):
+        print("humidity: {:.2f}".format(value))
+
+    def on_light(self, value):
+        print("light: {:.2f}".format(value))
+
+    def on_proximity(self, value):
+        print("proximity: {:.2f}".format(value))
+
+if __name__ == "__main__":
+
+    client = mqtt.Client()
+    client.tls_set(root_ca,
+                   certfile = public_crt,
+                   keyfile = private_key,
+                   cert_reqs = ssl.CERT_REQUIRED,
+                   tls_version = ssl.PROTOCOL_TLSv1_2,
+                   ciphers = None)
+    client.on_connect = on_connect
+    client.on_publish = on_publish
+
+    print ("Connecting to AWS IoT Broker...")
+    client.connect(mqtt_url, port = 8883, keepalive=60)
+    client.loop_start()
+    
 
     while(True):
+        # data = json.loads(message)
         print("Request")
-        temperature = iotee.request_temperature()
-        humidity = iotee.request_humidity()
-        light = iotee.request_light()
-        proximity = iotee.request_proximity()
+        iotee.request_temperature()
+        iotee.request_humidity()
+        iotee.request_light()
+        iotee.request_proximity()
         print("-----")
         sleep(1)
         if connflag == True:
             print ("Publishing...")
-            data = json.loads(message)
-            data['messages'][0]['payload']['sensorData']['pressure'] = 20
-            data['messages'][0]['payload']['sensorData']['temperature'] = temperature
+            print(data['messages'][0]['payload']['sensorData']['temperature'])
             json.dumps(message)
             client.publish("message_test", message, qos=1)
             sleep(5)
