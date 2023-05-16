@@ -29,7 +29,7 @@ def on_connect(client, userdata, flags, response_code):
     print("Connected with status: {0}".format(response_code))
 
 def on_publish(client, userdata, mid):
-    print (userdata, " -- ", mid)
+    print ('message number:', mid)
 
 
 message = """{"messages": [{
@@ -39,57 +39,69 @@ message = """{"messages": [{
                                 "motorId": 1,
                                 "sensorData": {
                                     "pressure": 1,
-                                    "temperature": 1
+                                    "temperature": 1,
+                                    "humidity": 1,
+                                    "light": 1,
+                                    "proximity": 1
                                 }
                             },
                             "default": {
                                 "motorId": 1,
                                 "sensorData": {
                                     "pressure": 1,
-                                    "temperature": 1
+                                    "temperature": 1,
+                                    "humidity": 1,
+                                    "light": 1,
+                                    "proximity": 1
                                 }
                             }
                             }
                         ]
                         }"""
+
 data = json.loads(message)
 print(data['messages'][0]['payload']['sensorData']['temperature'])
 
 # iotee part
-iotee = iotee.Iotee("COM7")
+iotee = Iotee("COM7")
 iotee.start()
-class MyIotee(Iotee):
-    def on_temperature(self, value):
-        data['messages'][0]['payload']['sensorData']['temperature'] = value
-        print(data['messages'][0]['payload']['sensorData']['temperature'])
-        print("temperature: {:.2f}".format(value))
 
-    def on_humidity(self, value):
-        print("humidity: {:.2f}".format(value))
+def on_temperature(value):
+    data['messages'][0]['payload']['sensorData']['temperature'] = value
+    print("temperature: {:.2f}".format(value))
 
-    def on_light(self, value):
-        print("light: {:.2f}".format(value))
+def on_humidity(value):
+    data['messages'][0]['payload']['sensorData']['humidity'] = value
+    print("humidity: {:.2f}".format(value))
 
-    def on_proximity(self, value):
-        print("proximity: {:.2f}".format(value))
+def on_light(value):
+    data['messages'][0]['payload']['sensorData']['light'] = value
+    print("light: {:.2f}".format(value))
+
+def on_proximity(value):
+    data['messages'][0]['payload']['sensorData']['proximity'] = value
+    print("proximity: {:.2f}".format(value))
+
+iotee.on_temperature = on_temperature
+iotee.on_humidity = on_humidity
+iotee.on_light = on_light
+iotee.on_proximity = on_proximity
+
+client = mqtt.Client()
+client.tls_set(root_ca,
+                certfile = public_crt,
+                keyfile = private_key,
+                cert_reqs = ssl.CERT_REQUIRED,
+                tls_version = ssl.PROTOCOL_TLSv1_2,
+                ciphers = None)
+client.on_connect = on_connect
+client.on_publish = on_publish
+
+print ("Connecting to AWS IoT Broker...")
+client.connect(mqtt_url, port = 8883, keepalive=60)
+client.loop_start()
 
 if __name__ == "__main__":
-
-    client = mqtt.Client()
-    client.tls_set(root_ca,
-                   certfile = public_crt,
-                   keyfile = private_key,
-                   cert_reqs = ssl.CERT_REQUIRED,
-                   tls_version = ssl.PROTOCOL_TLSv1_2,
-                   ciphers = None)
-    client.on_connect = on_connect
-    client.on_publish = on_publish
-
-    print ("Connecting to AWS IoT Broker...")
-    client.connect(mqtt_url, port = 8883, keepalive=60)
-    client.loop_start()
-    
-
     while(True):
         # data = json.loads(message)
         print("Request")
@@ -101,9 +113,10 @@ if __name__ == "__main__":
         sleep(1)
         if connflag == True:
             print ("Publishing...")
-            print(data['messages'][0]['payload']['sensorData']['temperature'])
-            json.dumps(message)
-            client.publish("message_test", message, qos=1)
-            sleep(5)
+            print(data)
+            client.publish("message_test", json.dumps(data), qos=1)
         else:
+            client.connect(mqtt_url, port = 8883, keepalive=60)
+            client.loop_start()
             print ("waiting for connection...")
+        sleep(4)
