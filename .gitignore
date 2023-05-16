@@ -6,6 +6,7 @@ aws_connect_test/
 aws_connect_hannes/
 src/
 
+config.py
 
 
 ### VisualStudioCode ###

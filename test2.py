@@ -20,6 +20,7 @@ mqtt_url = config.mqtt_url
 root_ca = config.root_ca
 public_crt = config.public_crt  
 private_key = config.private_key
+COM_port = config.COM_port
 
 connflag = False
 
@@ -63,7 +64,7 @@ data = json.loads(message)
 print(data['messages'][0]['payload']['sensorData']['temperature'])
 
 # iotee part
-iotee = Iotee("COM7")
+iotee = Iotee(COM_port)
 iotee.start()
 
 def on_temperature(value):
@@ -87,6 +88,7 @@ iotee.on_humidity = on_humidity
 iotee.on_light = on_light
 iotee.on_proximity = on_proximity
 
+# mqtt connecting part
 client = mqtt.Client()
 client.tls_set(root_ca,
                 certfile = public_crt,
