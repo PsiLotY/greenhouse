@@ -28,19 +28,12 @@ run_tests:
     - mv terraform /usr/local/bin/
     - terraform version
 
-terraform_init:
-  extends:
-    - .include_terraform_template
-  script:
-    - terraform init
-
 validate:
   stage: validate
   extends:
     - .include_terraform_template
-  needs:
-    - terraform_init
   script:
+    - terraform init
     - terraform validate
 
 fmt:
