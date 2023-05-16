@@ -33,8 +33,8 @@ resource "aws_iot_certificate" "my_certificate" {
 
 # Attach the certificate to the thing
 resource "aws_iot_policy_attachment" "my_attachment" {
-  policy_name = aws_iot_policy.my_policy.name
-  target      = aws_iot_certificate.my_certificate.arn
+  policy = aws_iot_policy.my_policy.name
+  target = aws_iot_certificate.my_certificate.arn
 }
 
 # Output the certificate ARN
