@@ -15,7 +15,7 @@ class Loop(Thread):
 iotee = iotee.Iotee("COM7")
 
 loop = Loop()
-
+ 
 loop.start()
 
 iotee.start()
