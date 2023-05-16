@@ -21,46 +21,29 @@ run_tests:
   script:
     - pytest -v --cov
 
-.include_terraform_template: &include_terraform_template
-  before_script:
-    - curl -O https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-    - unzip terraform_${TF_VERSION}_linux_amd64.zip
-    - mv terraform /usr/local/bin/
-    - terraform version
-
 validate:
   stage: validate
-  extends:
-    - .include_terraform_template
   script:
     - terraform init
     - terraform validate
 
 fmt:
   stage: validate
-  extends:
-    - .include_terraform_template
   script:
     - terraform fmt -check
 
 build:
   stage: build
-  extends:
-    - .include_terraform_template
   script:
     - terraform init
     - terraform plan
 
 deploy:
   stage: deploy
-  extends:
-    - .include_terraform_template
   script:
     - terraform apply -auto-approve
 
 cleanup:
   stage: cleanup
-  extends:
-    - .include_terraform_template
   script:
     - terraform destroy -auto-approve
