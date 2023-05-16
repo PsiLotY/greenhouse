@@ -32,6 +32,8 @@ validate:
   stage: validate
   extends:
     - .include_terraform_template
+  needs:
+    - terraform_init
   script:
     - terraform validate
 
