@@ -3,6 +3,8 @@ import ssl, random
 from time import sleep
 import datetime
 import json
+import iotee
+from threading import Thread
 
 
 mqtt_url = "a3uf1j30lr99lx-ats.iot.eu-central-1.amazonaws.com"
@@ -19,7 +21,6 @@ def on_connect(client, userdata, flags, response_code):
 
 def on_publish(client, userdata, mid):
     print (userdata + " -- " + mid)
-    #client.disconnect()
 
 
 if __name__ == "__main__":
@@ -38,24 +39,13 @@ if __name__ == "__main__":
                    ciphers = None)
 
     client.on_connect = on_connect
-#    client.on_publish = on_publish
+    client.on_publish = on_publish
 
     print ("Connecting to AWS IoT Broker...")
     client.connect(mqtt_url, port = 8883, keepalive=60)
     client.loop_start()
 #    client.loop_forever()
-
-
-    while True:
-        sleep(0.5)
-        print (connflag)
-        if connflag == True:
-            print ("Publishing...")
-            ap_measurement = random.uniform(25.0, 150.0)
-            timestamp = str(datetime.datetime.now())
-            temp = random.uniform(20.0, 30.0)
-            message = '{"timestamp":'+'"'+str(timestamp)+'",'+'"temperature":'+str(temp)+'}'
-            message = """{"messages": [{
+    message = """{"messages": [{
                             "inputName": "test",
                             "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
                             "payload": {
@@ -76,6 +66,17 @@ if __name__ == "__main__":
                         ]
                         }"""
                         
+
+    while True:
+        sleep(0.5)
+        print (connflag)
+        if connflag == True:
+            print ("Publishing...")
+            ap_measurement = random.uniform(25.0, 150.0)
+            timestamp = str(datetime.datetime.now())
+            temp = random.uniform(20.0, 30.0)
+            message = '{"timestamp":'+'"'+str(timestamp)+'",'+'"temperature":'+str(temp)+'}'
+            
             data = json.loads(message)
             data['messages'][0]['payload']['motorId'] = 1   
             data['messages'][0]['payload']['sensorData']['pressure'] = 20
@@ -89,3 +90,20 @@ if __name__ == "__main__":
 
 
 
+
+class Loop(Thread):
+    def run(self):
+
+        while(True):
+            print("Request")
+            iotee.request_temperature()
+            iotee.request_humidity()
+            iotee.request_light()
+            iotee.request_proximity()
+            print("-----")
+            sleep(1)
+iotee = iotee.Iotee("COM7")
+
+loop = Loop()
+ 
+loop.start()
