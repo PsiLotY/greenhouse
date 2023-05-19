@@ -1,9 +1,7 @@
 import paho.mqtt.client as mqtt
 import ssl, random
 from time import sleep
-import datetime
 import json
-import iotee
 import config
 from iotee import Iotee
 import signal
@@ -39,11 +37,11 @@ message = """{"messages": [{
                             "payload": {
                                 "motorId": 1,
                                 "sensorData": {
-                                    "pressure": 1,
-                                    "temperature": 1,
-                                    "humidity": 1,
-                                    "light": 1,
-                                    "proximity": 1
+                                    "pressure": 0,
+                                    "temperature": 0,
+                                    "humidity": 0,
+                                    "light": 0,
+                                    "proximity": 0
                                 }
                             },
                             "default": {
@@ -61,7 +59,7 @@ message = """{"messages": [{
                         }"""
 
 data = json.loads(message)
-print(data['messages'][0]['payload']['sensorData']['temperature'])
+print(data)
 
 # iotee part
 iotee = Iotee(COM_port)
