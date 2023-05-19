@@ -5,7 +5,7 @@ client = boto3.client('iot-data', region_name='eu-central-1')
 
 def lambda_handler(event, context):
     print(event)
-    temperature = event['messages'][0]['payload']['sensorData']['temperature']
+    temperature = event['messages'][0]['temperature']
     
     if temperature > 25:
         response = client.publish(

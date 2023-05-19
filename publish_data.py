@@ -43,32 +43,16 @@ client.on_connect = on_connect
 client.on_publish = on_publish
 
 #message template
-message = '''{'messages': [{
-                            'inputName': 'test',
-                            'messageId': '555e8fef-6c80-48f3-a6b5-2d2160d472f5',
-                            'payload': {
-                                'motorId': 1,
-                                'sensorData': {
-                                    'pressure': 0,
-                                    'temperature': 0,
-                                    'humidity': 0,
-                                    'light': 0,
-                                    'proximity': 0
-                                }
-                            },
-                            'default': {
-                                'motorId': 1,
-                                'sensorData': {
-                                    'pressure': 1,
-                                    'temperature': 1,
-                                    'humidity': 1,
-                                    'light': 1,
-                                    'proximity': 1
-                                }
-                            }
-                            }
-                        ]
-                        }'''
+message = """{"messages": [{
+                            "inputName": "sensorData",
+                            "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
+                            "pressure": 0,
+                            "temperature": 0,
+                            "humidity": 0,
+                            "light": 0,
+                            "proximity": 0
+                        }]
+            }"""
 
 data = json.loads(message)
 print(data)
@@ -79,19 +63,19 @@ iotee.start()
 
 #callback functions for iotee
 def on_temperature(value):
-    data['messages'][0]['payload']['sensorData']['temperature'] = value
+    data['messages'][0]['temperature'] = value
     print('temperature: {:.2f}'.format(value))
 
 def on_humidity(value):
-    data['messages'][0]['payload']['sensorData']['humidity'] = value
+    data['messages'][0]['humidity'] = value
     print('humidity: {:.2f}'.format(value))
 
 def on_light(value):
-    data['messages'][0]['payload']['sensorData']['light'] = value
+    data['messages'][0]['light'] = value
     print('light: {:.2f}'.format(value))
 
 def on_proximity(value):
-    data['messages'][0]['payload']['sensorData']['proximity'] = value
+    data['messages'][0]['proximity'] = value
     print('proximity: {:.2f}'.format(value))
 
 iotee.on_temperature = on_temperature
