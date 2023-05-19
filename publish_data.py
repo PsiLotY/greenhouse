@@ -99,12 +99,12 @@ client.loop_start()
 #main loop for sending data
 def main():
     while(True):
-        request_sensor_data
+        request_sensor_data()
         
         sleep(1)
         if connflag == True:
             print ('Publishing...')
-            print(data)
+            print((data["messages"][0]["temperature"]))
             client.publish('message_test', json.dumps(data), qos=1)
         else:
             client.connect(mqtt_url, port = 8883, keepalive=60)
