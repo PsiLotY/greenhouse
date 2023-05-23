@@ -44,7 +44,7 @@ client.on_connect = on_connect
 client.on_publish = on_publish
 
 #message template
-message = """{"messages": [{
+message = """{
                             "timestamp": 0,
                             "inputName": "sensorData",
                             "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
@@ -53,7 +53,7 @@ message = """{"messages": [{
                             "humidity": 0,
                             "light": 0,
                             "proximity": 0
-                        }]
+                        
             }"""
 
 data = json.loads(message)
@@ -65,35 +65,35 @@ iotee.start()
 
 #callback functions for iotee
 def on_temperature(value):
-    data['messages'][0]['temperature'] = value
+    data['temperature'] = value
     print('temperature: {:.2f}'.format(value))
 
 def on_humidity(value):
-    data['messages'][0]['humidity'] = value
+    data['humidity'] = value
     print('humidity: {:.2f}'.format(value))
 
 def on_light(value):
-    data['messages'][0]['light'] = value
+    data['light'] = value
     print('light: {:.2f}'.format(value))
 
 def on_proximity(value):
-    data['messages'][0]['proximity'] = value
+    data['proximity'] = value
     print('proximity: {:.2f}'.format(value))
 
-timestamp = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
 iotee.on_temperature = on_temperature
 iotee.on_humidity = on_humidity
 iotee.on_light = on_light
 iotee.on_proximity = on_proximity
 
 #gets the sensor data from the connected devive on COM_port through callback functions
-def request_sensor_data():
+def request_sensor_data(timestamp):
     iotee.request_temperature()
     iotee.request_humidity()
     iotee.request_light()
     iotee.request_proximity()
-    data['messages'][0]["timestamp"] = str(timestamp)
     print(timestamp)
+    data["timestamp"] = timestamp
     print('\n')
 
 #connect to AWS IoT core thing
@@ -106,13 +106,12 @@ def main():
     while(True):
         timestamp = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         print (timestamp)
-        request_sensor_data()
+        request_sensor_data(timestamp)
         
         sleep(1)
         if connflag == True:
             print ('Publishing...')
-            print((data["messages"][0]["temperature"]))
-            client.publish('hannes_test', json.dumps(data), qos=1)
+            client.publish('hannes_test', payload=json.dumps(data), qos=1)
         else:
             client.connect(mqtt_url, port = 8883, keepalive=60)
             client.loop_start()
