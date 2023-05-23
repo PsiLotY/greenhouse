@@ -5,6 +5,9 @@
 aws_connect_test/
 aws_connect_hannes/
 
+*.pem
+*.key
+*.crt
 
 ### VisualStudioCode ###
 .vscode/*
