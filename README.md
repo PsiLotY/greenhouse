@@ -1,5 +1,13 @@
 # Greenhouse
 
+## current
+Please run this command:
+```
+git update-index --skip-worktree functions/config.py
+```
+and change the config.py file to have your access tokens. If you need to include them also include them to the gitignore file
+
+
 ## setup
     
 First of all you need to have the correct hardware with the newest software. If the program does not list 4 Sensor datas when running you need to update it. To do so go (here)[https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages] and download the .uf2 file from the newest version. Connect the sensor device while holding down the reset button on the back. This opens a windows explorer window in which you insert the .uf2 file. __Done__
