@@ -6,6 +6,7 @@ import config
 from iotee import Iotee
 import signal
 import sys
+import datetime
 
 #handles shutting down threads on ctrl+c
 def signal_handler(signal, frame):
@@ -44,6 +45,7 @@ client.on_publish = on_publish
 
 #message template
 message = """{"messages": [{
+                            "timestamp": 0,
                             "inputName": "sensorData",
                             "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
                             "pressure": 0,
@@ -78,6 +80,7 @@ def on_proximity(value):
     data['messages'][0]['proximity'] = value
     print('proximity: {:.2f}'.format(value))
 
+timestamp = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 iotee.on_temperature = on_temperature
 iotee.on_humidity = on_humidity
 iotee.on_light = on_light
@@ -89,6 +92,8 @@ def request_sensor_data():
     iotee.request_humidity()
     iotee.request_light()
     iotee.request_proximity()
+    data['messages'][0]["timestamp"] = str(timestamp)
+    print(timestamp)
     print('\n')
 
 #connect to AWS IoT core thing
@@ -99,13 +104,15 @@ client.loop_start()
 #main loop for sending data
 def main():
     while(True):
+        timestamp = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        print (timestamp)
         request_sensor_data()
         
         sleep(1)
         if connflag == True:
             print ('Publishing...')
             print((data["messages"][0]["temperature"]))
-            client.publish('message_test', json.dumps(data), qos=1)
+            client.publish('hannes_test', json.dumps(data), qos=1)
         else:
             client.connect(mqtt_url, port = 8883, keepalive=60)
             client.loop_start()
