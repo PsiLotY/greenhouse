@@ -5,8 +5,6 @@
 aws_connect_test/
 aws_connect_hannes/
 
-config.py
-
 
 ### VisualStudioCode ###
 .vscode/*
