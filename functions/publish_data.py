@@ -31,7 +31,11 @@ def on_connect(client, userdata, flags, response_code):
 
 def on_publish(client, userdata, mid):
     print ('message number:', mid)
-    
+
+def on_message(client, userdata, msg):
+    print("Message received, topic: ", msg.topic)
+    print("Message payload: ", msg.payload.decode())
+
 #setup mqtt client
 client = mqtt.Client()
 client.tls_set(root_ca,
@@ -42,21 +46,23 @@ client.tls_set(root_ca,
                 ciphers = None)
 client.on_connect = on_connect
 client.on_publish = on_publish
+client.on_message = on_message
 
 #message template
-message = """{
-                            "timestamp": 0,
-                            "inputName": "sensorData",
-                            "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
-                            "pressure": 0,
-                            "temperature": 0,
-                            "humidity": 0,
-                            "light": 0,
-                            "proximity": 0
-                        
-            }"""
+message = {
+    "messages": [{
+        "timestamp": 0,
+        "inputName": "sensorData",
+        "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
+        "pressure": 0,
+        "temperature": 0,
+        "humidity": 0,
+        "light": 0,
+        "proximity": 0
+    }]
+}
 
-data = json.loads(message)
+data = message
 print(data)
 
 #setup iotee
@@ -65,21 +71,20 @@ iotee.start()
 
 #callback functions for iotee
 def on_temperature(value):
-    data['temperature'] = value
+    data['messages'][0]['temperature'] = value
     print('temperature: {:.2f}'.format(value))
 
 def on_humidity(value):
-    data['humidity'] = value
+    data['messages'][0]['humidity'] = value
     print('humidity: {:.2f}'.format(value))
 
 def on_light(value):
-    data['light'] = value
+    data['messages'][0]['light'] = value
     print('light: {:.2f}'.format(value))
 
 def on_proximity(value):
-    data['proximity'] = value
+    data['messages'][0]['proximity'] = value
     print('proximity: {:.2f}'.format(value))
-
 
 iotee.on_temperature = on_temperature
 iotee.on_humidity = on_humidity
@@ -93,13 +98,13 @@ def request_sensor_data(timestamp):
     iotee.request_light()
     iotee.request_proximity()
     print(timestamp)
-    data["timestamp"] = timestamp
+    data["messages"][0]["timestamp"] = timestamp
     print('\n')
 
-#connect to AWS IoT core thing
 print ('Connecting to AWS IoT Broker...')
 client.connect(mqtt_url, port = 8883, keepalive=60)
 client.loop_start()
+client.subscribe('message_test')
 
 #main loop for sending data
 def main():
@@ -117,9 +122,6 @@ def main():
             client.loop_start()
             print ('waiting for connection...')
         sleep(4)
-
-
-
 
 if __name__ == '__main__':
     main()
