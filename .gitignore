@@ -6,6 +6,9 @@ aws_connect_test/
 aws_connect_hannes/
 aws_connect_antti/
 
+*.pem
+*.key
+*.crt
 
 ### VisualStudioCode ###
 .vscode/*
