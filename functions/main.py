@@ -13,6 +13,7 @@ def signal_handler(signal, frame):
     print('Shutting down')
     iotee.stop()
     sys.exit(0)
+    
 signal.signal(signal.SIGINT, signal_handler)
 
 #gets data from config.py
@@ -48,43 +49,48 @@ client.on_connect = on_connect
 client.on_publish = on_publish
 client.on_message = on_message
 
-#message template
-message = {
-    "messages": [{
-        "timestamp": 0,
-        "inputName": "sensorData",
-        "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
-        "pressure": 0,
-        "temperature": 0,
-        "humidity": 0,
-        "light": 0,
-        "proximity": 0
-    }]
-}
+# message template
+message = """{
+                            "timestamp": 0,
+                            "inputName": "sensorData",
+                            "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
+                            "pressure": 0,
+                            "temperature": 0,
+                            "humidity": 0,
+                            "light": 0,
+                            "proximity": 0
+                        
+            }"""
 
-data = message
+data = json.loads(message)
+
 print(data)
 
-#setup iotee
+# setup iotee
 iotee = Iotee(COM_port)
 iotee.start()
 
-#callback functions for iotee
+
+# callback functions for iotee
 def on_temperature(value):
-    data['messages'][0]['temperature'] = value
-    print('temperature: {:.2f}'.format(value))
+    data['temperature'] = value
+    print("temperature: {:.2f}".format(value))
+
 
 def on_humidity(value):
-    data['messages'][0]['humidity'] = value
-    print('humidity: {:.2f}'.format(value))
+    data['humidity'] = value
+    print("humidity: {:.2f}".format(value))
+
 
 def on_light(value):
-    data['messages'][0]['light'] = value
-    print('light: {:.2f}'.format(value))
+    data['light'] = value
+    print("light: {:.2f}".format(value))
+
 
 def on_proximity(value):
-    data['messages'][0]['proximity'] = value
-    print('proximity: {:.2f}'.format(value))
+    data['proximity'] = value
+    print("proximity: {:.2f}".format(value))
+
 
 iotee.on_temperature = on_temperature
 iotee.on_humidity = on_humidity
@@ -98,7 +104,7 @@ def request_sensor_data(timestamp):
     iotee.request_light()
     iotee.request_proximity()
     print(timestamp)
-    data["messages"][0]["timestamp"] = timestamp
+    data['timestamp'] = timestamp
     print('\n')
 
 print ('Connecting to AWS IoT Broker...')
