@@ -4,7 +4,7 @@
 
 aws_connect_test/
 aws_connect_hannes/
-
+/test
 
 ### VisualStudioCode ###
 .vscode/*
