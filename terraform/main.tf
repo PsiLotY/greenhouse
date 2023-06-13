@@ -15,9 +15,10 @@ terraform {
 # Define your AWS provider configuration
 provider "aws" {
   region = "eu-central-1"  # Update with your desired region
-  access_key = "AKIAWAWJBWF65CWABPGM"
-  secret_key = "nkMDWAVUsGBa1QKsU/GrrHxY+YqtukrBh8Oqzzx/"
+  access_key = "AKIAWAWJBWF65CWABPGM" #var.access_key 
+  secret_key = "nkMDWAVUsGBa1QKsU/GrrHxY+YqtukrBh8Oqzzx/" #var.secret_key #
 }
+
 
 # Call the thing module
 module "thing" {
@@ -34,9 +35,9 @@ module "thing" {
   region = "eu-central-1"
 }
 
-module "events" {
-  source = "./Events"
-}
+# module "events" {
+#   source = "./Events"
+# }
 
 
 module "timestream" {
