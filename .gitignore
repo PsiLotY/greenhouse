@@ -5,6 +5,7 @@
 aws_connect_test/
 aws_connect_hannes/
 aws_connect_antti/
+aws_connect_isaac/
 
 
 *.pem
