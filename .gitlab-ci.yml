@@ -6,6 +6,5 @@
 #     - pytest
 
 include:
-  -template: Terraform.gitlab-ci.yml
+  - template: Terraform.gitlab-ci.yml
 
-  
