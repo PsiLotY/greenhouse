@@ -51,6 +51,10 @@ module "timestream" {
   region = "eu-central-1"
 }
 
+module "lambda" {
+  source = "./lambda"
+}
+
 
 
 # terraform {
