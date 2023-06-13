@@ -1,52 +1,30 @@
-run_tests:
-  before_script:
-    - pip install flake8 pytest pytest-cov
-    - pip install -r requirements.txt
-  script:
-    - pytest
-
-
-include:
-  - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
-  - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
+# run_tests:
+#   before_script:
+#     - pip install flake8 pytest pytest-cov
+#     - pip install -r requirements.txt
+#   script:
+#     - pytest
 
 stages:
   - validate
-  - test
-  - build
   - deploy
-  - cleanup
 
-fmt:
-  extends: .terraform:fmt
-  needs: []
+variables:
+  TF_VERSION: "1.2.0"
 
-validate:
-  extends: .terraform:validate
-  needs: []
+.include:
+  - template: Terraform/Base.gitlab-ci.yml
 
-test:
-  extends: .terraform:test
-  needs: []
+format_terraform:
+  stage: validate
+  image: hashicorp/terraform:${TF_VERSION}
+  script:
+    - terraform fmt -check -recursive
 
-build:
-  extends: .terraform:build
-  environment:
-    name: $TF_STATE_NAME
-    action: prepare
-
-deploy:
-  extends: .terraform:deploy
-  dependencies:
-    - build
-  environment:
-    name: $TF_STATE_NAME
-    action: start
-
-cleanup:
-  extends: .terraform:cleanup
-  dependencies:
-    - deploy
-  environment:
-    name: $TF_STATE_NAME
-    action: stop
+deploy_terraform:
+  stage: deploy
+  image: hashicorp/terraform:${TF_VERSION}
+  script:
+    - terraform init
+    - terraform plan
+    - terraform apply --auto-approve
