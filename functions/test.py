@@ -2,7 +2,7 @@ from iotee import Iotee
 from time import sleep
 
         
-iotee = Iotee("COM7")
+iotee = Iotee("COM5")
 iotee.start()
 
 while(True):

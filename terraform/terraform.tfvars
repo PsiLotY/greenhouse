@@ -1,0 +1,1 @@
+azs = "eu-central-1"
