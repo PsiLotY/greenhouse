@@ -34,6 +34,10 @@ module "thing" {
   region = "eu-central-1"
 }
 
+module "events" {
+  source = "./Events"
+}
+
 
 
 
