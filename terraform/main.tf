@@ -39,6 +39,17 @@ module "events" {
 }
 
 
+module "timestream" {
+  source = "./Timestream"
+
+  # Pass any required variables to the module
+  database_name = "terra_database"
+  table_name  = "terra_table"
+  providers = {
+    aws = aws
+  }
+  region = "eu-central-1"
+}
 
 
 
