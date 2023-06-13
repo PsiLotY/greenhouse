@@ -25,8 +25,7 @@ resource "aws_iot_topic_rule" "rule" {
   description = "This is an example rule"
   enabled     = true
   sql         = "SELECT * FROM 'topic/test'"
-  sql_version = "2016-03-23" # This is the default version automatically set by AWS
-  rule_disabled = false
+  sql_version = "2016-03-23"
 }
 
 variable "tables" {
