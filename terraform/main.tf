@@ -15,8 +15,8 @@ terraform {
 # Define your AWS provider configuration
 provider "aws" {
   region = "eu-central-1"  # Update with your desired region
-  access_key = "AKIAWAWJBWF65CWABPGM"
-  secret_key = "nkMDWAVUsGBa1QKsU/GrrHxY+YqtukrBh8Oqzzx/"
+  access_key = var.access_key #"AKIAWAWJBWF65CWABPGM"
+  secret_key = var.secret_key #"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"
 }
 
 # Call the thing module
