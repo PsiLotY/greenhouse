@@ -9,7 +9,6 @@ terraform {
       version = "~> 4.0"
     }
   }
-  
   required_version = ">= 1.2.0"
 }
 
@@ -61,6 +60,13 @@ module "thing" {
 #   name = "thing"
 # }
 
+resource "aws_iot_topic_rule" "rule" {
+  name        = "MyRule"
+  description = "This is an example rule"
+  enabled     = true
+  sql         = "SELECT * FROM 'topic/test'"
+  sql_version = "2016-03-23"
+}
 
 # # Call the thing module
 # module "thing" {
