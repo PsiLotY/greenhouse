@@ -5,24 +5,7 @@
 #   script:
 #     - pytest
 
-stages:
-  - validate
-  - deploy
+include:
+  -template: Terraform.gitlab-ci.yml
 
-variables:
-  TF_VERSION: "1.2.0"
-
-.include:
-  - template: Terraform/Base.gitlab-ci.yml
-
-format_terraform:
-  stage: validate
-  script:
-    - terraform fmt -check -recursive
-
-deploy_terraform:
-  stage: deploy
-  script:
-    - terraform init
-    - terraform plan
-    - terraform apply --auto-approve
+  
