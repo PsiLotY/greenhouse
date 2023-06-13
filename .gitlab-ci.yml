@@ -17,13 +17,11 @@ variables:
 
 format_terraform:
   stage: validate
-  image: hashicorp/terraform:${TF_VERSION}
   script:
     - terraform fmt -check -recursive
 
 deploy_terraform:
   stage: deploy
-  image: hashicorp/terraform:${TF_VERSION}
   script:
     - terraform init
     - terraform plan
