@@ -19,6 +19,7 @@ provider "aws" {
   secret_key = "nkMDWAVUsGBa1QKsU/GrrHxY+YqtukrBh8Oqzzx/" #var.secret_key #
 }
 
+
 # Call the thing module
 module "thing" {
   source = "./Thing"
