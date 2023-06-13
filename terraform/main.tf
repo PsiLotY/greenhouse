@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
+    awscc = {
+      source  = "hashicorp/awscc"
+      version = ">= 0.5.0"
+    }
   }
   required_version = ">= 1.2.0"
 }
@@ -17,6 +21,12 @@ provider "aws" {
   region = "eu-central-1"  # Update with your desired region
   access_key = "AKIAWAWJBWF65CWABPGM" #var.access_key 
   secret_key = "nkMDWAVUsGBa1QKsU/GrrHxY+YqtukrBh8Oqzzx/" #var.secret_key #
+}
+
+provider "awscc" {
+  region     = "eu-central-1"
+  access_key = "AKIAWAWJBWF65CWABPGM"
+  secret_key = "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"
 }
 
 
@@ -35,9 +45,12 @@ module "thing" {
   region = "eu-central-1"
 }
 
-# module "events" {
-#   source = "./Events"
-# }
+module "events" {
+  source = "./Events"
+  providers ={
+    awscc = awscc
+  }
+}
 
 
 module "timestream" {
