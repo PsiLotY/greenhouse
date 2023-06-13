@@ -1,21 +1,14 @@
 run_tests:
-  image: python:3.10-bullseye
   before_script:
     - pip install flake8 pytest pytest-cov
     - pip install -r requirements.txt
   script:
-    - pytest -v --cov
+    - pytest
 
-.include_terraform_template: &include_terraform_template
-  before_script:
-    - curl -O https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-    - unzip terraform_${TF_VERSION}_linux_amd64.zip
-    - mv terraform /usr/local/bin/
-    - terraform version
 
 include:
-  - template: Terraform/Base.gitlab-ci.yml
-  - template: Jobs/SAST-IaC.gitlab-ci.yml
+  - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
+  - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
 
 stages:
   - validate
@@ -24,33 +17,36 @@ stages:
   - deploy
   - cleanup
 
-variables:
-  TF_VERSION: "1.2.0"
-  TF_STATE_NAME: default
-  TF_CACHE_KEY: default
-
 fmt:
-  extends:
-    - .terraform:fmt
-    - .include_terraform_template
+  extends: .terraform:fmt
   needs: []
 
 validate:
-  extends:
-    - .terraform:validate
-    - .include_terraform_template
+  extends: .terraform:validate
+  needs: []
+
+test:
+  extends: .terraform:test
   needs: []
 
 build:
-  extends:
-    - .terraform:build
-    - .include_terraform_template
+  extends: .terraform:build
+  environment:
+    name: $TF_STATE_NAME
+    action: prepare
 
 deploy:
-  extends:
-    - .terraform:deploy
-    - .include_terraform_template
+  extends: .terraform:deploy
   dependencies:
     - build
   environment:
     name: $TF_STATE_NAME
+    action: start
+
+cleanup:
+  extends: .terraform:cleanup
+  dependencies:
+    - deploy
+  environment:
+    name: $TF_STATE_NAME
+    action: stop
