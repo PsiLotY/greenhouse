@@ -19,3 +19,4 @@ resource "aws_timestreamwrite_table" "my_table" {
     Name = "example-timestream-table"
   }
 }
+
