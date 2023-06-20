@@ -1,30 +1,16 @@
-
-resource "awscc_iotevents_detector_model" "test" {
-  detector_model_definition = {
-    states = [{
-      state_name = "state1"
-      on_input = {
-        events = [{
-          event_name = "event1"
-          condition  = "$input.sensorData.temperature > 25"
-          nextState  = "state2"
-        }]
-      }
-      }, {
-      state_name = "state2"
-      on_input = {
-        events = [{
-          event_name = "event2"
-          condition  = "$input.sensorData.temperature < 10"
-          nextState  = "state1"
-        }]
-      }
-    }]
-    initial_state_name = "state1"
+resource "awscc_iotevents_input" "test_input" {
+  input_definition = {
+    attributes = [ {
+      json_path = "messageId"
+    },{
+      json_path = "sensor_data.humidity"
+    }, {
+      json_path = "sensor_data.temperature"
+    }, {
+      json_path = "sensor_data.light"
+    } ]
   }
-  detector_model_name        = "test"
-  detector_model_description = "this is a test"
-  role_arn                   = "arn:aws:iam::413812240765:role/service-role/Model"
+  input_name        = "device_input"
 }
 
 resource "awscc_iotevents_detector_model" "window" {
@@ -42,7 +28,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name  = "open_window"
-              condition   = "$input.sensorData.temperature > 38"
+              condition   = "$input.device_input.sensor_data.temperature > 38"
               actions     = []
               next_state  = "window_open"
             }
@@ -62,7 +48,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name  = "close_window"
-              condition   = "$input.sensorData.temperature < 30"
+              condition   = "$input.device_input.sensor_data.temperature < 30"
               actions     = []
               next_state  = "window_closed"
             }
