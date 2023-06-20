@@ -99,7 +99,7 @@ def main():
         request_sensor_data(iotee)
         
         sleep(1)
-        client.publish('hannes_test', payload=json.dumps(data), qos=1)
+        client.publish('sensor_data', payload=json.dumps(data), qos=1)
         
         sleep(4)
 
