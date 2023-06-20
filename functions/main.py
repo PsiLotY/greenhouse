@@ -1,12 +1,12 @@
 import paho.mqtt.client as mqtt
-import ssl, random
+import ssl
 from time import sleep
 import json
 import config
 from iotee import Iotee
 import signal
 import sys
-import datetime
+import time 
 
 #handles shutting down threads on ctrl+c
 def signal_handler(signal, frame):
@@ -115,7 +115,7 @@ client.subscribe('message_test')
 #main loop for sending data
 def main():
     while(True):
-        timestamp = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+        timestamp = int(time.time())
         print (timestamp)
         request_sensor_data(timestamp)
         
@@ -123,6 +123,7 @@ def main():
         if connflag == True:
             print ('Publishing...')
             client.publish('hannes_test', payload=json.dumps(data), qos=1)
+        
         else:
             client.connect(mqtt_url, port = 8883, keepalive=60)
             client.loop_start()
@@ -131,3 +132,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
