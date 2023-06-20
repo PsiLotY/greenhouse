@@ -1,16 +1,16 @@
 resource "awscc_iotevents_input" "test_input" {
   input_definition = {
-    attributes = [ {
+    attributes = [{
       json_path = "messageId"
-    },{
+      }, {
       json_path = "sensor_data.humidity"
-    }, {
+      }, {
       json_path = "sensor_data.temperature"
-    }, {
+      }, {
       json_path = "sensor_data.light"
-    } ]
+    }]
   }
-  input_name        = "device_input"
+  input_name = "device_input"
 }
 
 resource "awscc_iotevents_detector_model" "window" {
@@ -27,15 +27,25 @@ resource "awscc_iotevents_detector_model" "window" {
           events = []
           transition_events = [
             {
-              event_name  = "open_window"
-              condition   = "$input.device_input.sensor_data.temperature > 38"
-              actions     = []
-              next_state  = "window_open"
+              event_name = "open_window"
+              condition  = "$input.device_input.sensor_data.temperature > 38"
+              actions    = []
+              next_state = "window_open"
             }
           ]
         }
         on_enter = {
-          events = []
+          events = [{
+            event_name = "enter_close_window_state",
+            condition = "true",
+            actions = [
+              {
+                iot_topic_publish = {
+                  mqtt_topic = "events/window"
+                }
+              }
+            ]
+          }]
         }
         on_exit = {
           events = []
@@ -47,15 +57,25 @@ resource "awscc_iotevents_detector_model" "window" {
           events = []
           transition_events = [
             {
-              event_name  = "close_window"
-              condition   = "$input.device_input.sensor_data.temperature < 30"
-              actions     = []
-              next_state  = "window_closed"
+              event_name = "close_window"
+              condition  = "$input.device_input.sensor_data.temperature < 30"
+              actions    = []
+              next_state = "window_closed"
             }
           ]
         }
         on_enter = {
-          events = []
+          events = [{
+            event_name = "enter_close_window_state",
+            condition = "true",
+            actions = [
+              {
+                iot_topic_publish = {
+                  mqtt_topic = "events/window"
+                }
+              }
+            ]
+          }]
         }
         on_exit = {
           events = []
