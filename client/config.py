@@ -1,5 +1,5 @@
-mqtt_url = "a3uf1j30lr99lx-ats.iot.eu-central-1.amazonaws.com"
-root_ca = 'certs/root-CA.crt'
-public_crt = 'certs/dings.cert.pem'
-private_key = 'certs/dings.private.key'
+mqtt_url = ''
+root_ca = 'client/certs/'
+public_crt = 'client/certs/'
+private_key = 'client/certs/'
 COM_port = 'COM3'

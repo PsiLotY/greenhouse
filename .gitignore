@@ -2,10 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
 
 
-aws_connect_test/
-aws_connect_hannes/
-aws_connect_antti/
-aws_connect_isaac/
+client/certs/.cert
+client/certs/*Policy*
 
 
 *.pem
