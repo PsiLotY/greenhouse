@@ -1,7 +1,6 @@
 import paho.mqtt.client as mqtt
 from time import sleep
 import config
-import time 
 import ssl
 
 #gets data from config.py
@@ -25,11 +24,6 @@ def on_message(client, userdata, msg):
     print("Message received, topic: ", msg.topic)
     print("Message payload: ", msg.payload.decode())
 
-def on_message(client, userdata, message):
-    print("Received message '" + str(message.payload) + "' on topic '"
-        + message.topic + "' with QoS " + str(message.qos))
-
-
 #setup mqtt client
 client = mqtt.Client()
 client.tls_set(root_ca,
@@ -45,19 +39,11 @@ client.on_message = on_message
 
 #main loop for receiving data
 def main():
-    while(True):
-        timestamp = int(time.time())
-        #print (timestamp)
-        sleep(1)
-        if connflag == True:
-            print ('Receiving... ')
-            client.subscribe('subscribe_test', qos=1)
-            client.subscribe('error', qos=1)
-        else:
-            client.connect(mqtt_url, port = 8883, keepalive=60)
-            client.loop_start()
-            print ('waiting for connection...')
-        sleep(4)
-
+    client.connect(mqtt_url, port = 8883, keepalive=60)
+    client.subscribe('status', qos=1)
+    client.subscribe('error', qos=1)
+    client.loop_forever()
+    
+    
 if __name__ == '__main__':
     main()
