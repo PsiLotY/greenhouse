@@ -24,6 +24,13 @@ COM_port = ''
 ```
 and insert all the needed certifications. They can be found in the AWS IoT Core, on the thing. 
 
+Create a terraform.tfvars file in the terraform directory and insert the following code:
+```terraform    
+aws_access_key = ""
+aws_secret_key = ""
+```
+and populate the fields with the access and secret key of the AWS account.
+
 After connecting the device figure out which COM Port it's connected to and insert it in the config.py file. To figure that out you can open the device manager and look for USB connections.
 
 ## run
