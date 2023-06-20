@@ -32,7 +32,7 @@ provider "awscc" {
 
 # Call the thing module
 module "thing" {
-  source = "./Thing"
+  source = "./thing"
 
   # Pass any required variables to the module
   thing_name        = "terra_thing"
@@ -46,7 +46,7 @@ module "thing" {
 }
 
 module "events" {
-  source = "./Events"
+  source = "./events"
   providers ={
     awscc = awscc
   }
@@ -54,7 +54,7 @@ module "events" {
 
 
 module "timestream" {
-  source = "./Timestream"
+  source = "./timestream"
 
   # Pass any required variables to the module
   database_name = "terra_database"
