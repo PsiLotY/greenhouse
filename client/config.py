@@ -1,5 +1,0 @@
-mqtt_url = ''
-root_ca = 'client/certs/'
-public_crt = 'client/certs/'
-private_key = 'client/certs/'
-COM_port = 'COM3'
