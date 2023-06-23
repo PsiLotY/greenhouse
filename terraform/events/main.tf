@@ -106,7 +106,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
   detector_model_name        = "sprinkler_events"
   detector_model_description = "Starts and stops the sprinklers based on humidity"
   evaluation_method          = "SERIAL"
-  role_arn                   = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
+  role_arn                   = var.arn
 
   detector_model_definition = {
     states = [

@@ -37,7 +37,7 @@ module "thing" {
   # Pass any required variables to the module
   thing_name        = "terra_thing"
   thing_attributes  = {
-    arn = "arn:aws:iam::aws:policy/service-role/AWSIoTThingsRegistration"
+    arn = aws_iam_role.core_role.arn
   }
   providers = {
     aws = aws
@@ -51,7 +51,7 @@ module "events" {
     awscc = awscc
   }
 
-  arn = aws_iam_role.test_role.arn
+  arn = aws_iam_role.core_role.arn
 }
 
 
@@ -77,22 +77,3 @@ module "core_rules" {
     aws = aws
   }
 }
-
-
-
-# # Call the thing module
-# module "thing" {
-#   source = "./thing"
-
-#   # Pass any required variables to the module
-#   thing_name = "my-thing"
-# }
-
-# resource "aws_iot_topic_rule" "rule" {
-#   name        = "MyRule"
-#   description = "This is an example rule"
-#   enabled     = true
-#   sql         = "SELECT * FROM 'topic/test'"
-#   sql_version = "2016-03-23" # This is the default version automatically set by AWS
-#   rule_disabled = false
-# }
