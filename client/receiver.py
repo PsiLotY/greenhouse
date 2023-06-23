@@ -23,7 +23,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
 
-    subscribe_to(client, ['status', 'error'], 1)
+    subscribe_to(client, ['iot/debugging', 'iot/error', 'iot/actor_data'], 1)
     client.loop_forever()
     
     
