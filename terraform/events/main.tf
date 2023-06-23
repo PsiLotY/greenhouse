@@ -14,8 +14,8 @@ resource "awscc_iotevents_input" "device_input" {
 }
 
 resource "awscc_iotevents_detector_model" "window" {
-  detector_model_name        = "monitors and changes the state of the windows"
-  detector_model_description = "window events"
+  detector_model_name        = "window_events"
+  detector_model_description = "monitors and changes the state of the windows"
   evaluation_method          = "SERIAL"
   role_arn                   = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
 
@@ -88,8 +88,8 @@ resource "awscc_iotevents_detector_model" "window" {
 
 
 resource "awscc_iotevents_detector_model" "sprinkler" {
-  detector_model_name        = "Starts and stops the sprinklers based on humidity"
-  detector_model_description = "sprinkler events"
+  detector_model_name        = "sprinkler_events"
+  detector_model_description = "Starts and stops the sprinklers based on humidity"
   evaluation_method          = "SERIAL"
   role_arn                   = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
 
