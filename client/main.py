@@ -30,16 +30,15 @@ def on_message(client, userdata, msg):
 
 # message template
 message = {
-            "timestamp": 0,
-            "inputName": "sensorData",
-            "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
-            "pressure": 0,
-            "temperature": 0,
-            "humidity": 0,
-            "light": 0,
-            "proximity": 0
-            }
-
+        "timestamp": 0,
+        "inputName": "sensorData",
+        "messageId": "555e8fef-6c80-48f3-a6b5-2d2160d472f5",
+        "pressure": 0,
+        "temperature": 0,
+        "humidity": 0,
+        "light": 0,
+        "proximity": 0
+}
 data = message
 
 
@@ -94,12 +93,12 @@ def main():
     client.on_publish = on_publish
     client.on_message = on_message
 
-    subscribe_to(client, ['message_test'], 1)    
+    subscribe_to(client, ['test'], 1)    
     while(True):
         request_sensor_data(iotee)
         
         sleep(1)
-        client.publish('sensor_data', payload=json.dumps(data), qos=1)
+        client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
         
         sleep(4)
 

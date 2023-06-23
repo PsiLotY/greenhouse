@@ -15,7 +15,7 @@ def connect_to_mqtt():
     client = mqtt.Client()
     set_tls(client)
     print ('Connecting to AWS IoT Broker...')
-    client.connect(mqtt_url, port = 8883, keepalive=60)
+    client.connect(mqtt_url, port = 8883, keepalive=120)
     return client
 
 def set_tls(client: mqtt.Client):
@@ -29,12 +29,12 @@ def set_tls(client: mqtt.Client):
     root_ca = config.root_ca
     public_crt = config.public_crt  
     private_key = config.private_key
-    client.tls_set(root_ca,
-                        certfile = public_crt,
-                        keyfile = private_key,
-                        cert_reqs = ssl.CERT_REQUIRED,
-                        tls_version = ssl.PROTOCOL_TLSv1_2,
-                        ciphers = None)
+    client.tls_set( root_ca,
+                    certfile = public_crt,
+                    keyfile = private_key,
+                    cert_reqs = ssl.CERT_REQUIRED,
+                    tls_version = ssl.PROTOCOL_TLSv1_2,
+                    ciphers = None)
     
 
 def subscribe_to(client: mqtt.Client, topics: list, qos: int):
