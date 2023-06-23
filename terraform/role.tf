@@ -14,24 +14,23 @@ resource "aws_iam_role_policy" "test_policy" {
     Statement = [
     {
       Effect = "Allow"
-      actions = ["lambda:*"]
-      resources = ["*"]
+      Action = ["lambda:*"]
+      Resource = ["*"]
     },
     {
-        Effect = "Allow"
-        actions = ["timestream:*"]
-        resources = ["*"]
+      Effect = "Allow"
+      Action = ["timestream:*"]
+      Resource = ["*"]
     },
     {
-        Effect = "Allow"
-        actions = ["iot:*"]
-        resources = ["*"]
+      Effect = "Allow"
+      Action = ["iot:*"]
+      Resource = ["*"]
     },
     {
-        Effect = "Allow"
-        actions = ["iotevents:*"]
-        resources = ["*"]
-    }
-  ]
-  })
+      Effect = "Allow"
+      Action = ["iotevents:*"]
+      Resource = ["*"]
+    }]
+})
 }

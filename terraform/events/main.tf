@@ -13,11 +13,26 @@ resource "awscc_iotevents_input" "device_input" {
   input_name = "device_input"
 }
 
+resource "awscc_iotevents_input" "device_input2" {
+  input_definition = {
+    attributes = [{
+      json_path = "messageId"
+      }, {
+      json_path = "humidity"
+      }, {
+      json_path = "temperature"
+      }, {
+      json_path = "light"
+    }]
+  }
+  input_name = "device_input2"
+}
+
 resource "awscc_iotevents_detector_model" "window" {
   detector_model_name        = "window_events"
   detector_model_description = "monitors and changes the state of the windows"
   evaluation_method          = "SERIAL"
-  role_arn                   = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
+  role_arn                   = var.arn
 
   detector_model_definition = {
     states = [
@@ -28,7 +43,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "open_windows"
-              condition  = "$input.device_input.temperature > 38"
+              condition  = "$input.device_input2.temperature > 38"
               actions    = []
               next_state = "windows_open"
             }
@@ -58,7 +73,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "close_windows"
-              condition  = "$input.device_input.temperature < 30"
+              condition  = "$input.device_input2.temperature < 30"
               actions    = []
               next_state = "windows_closed"
             }
