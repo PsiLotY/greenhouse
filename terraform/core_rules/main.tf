@@ -3,10 +3,27 @@ resource "aws_iot_topic_rule" "test_rule" {
   description = "Testing whether the rule works with iotevents"
   enabled     = true
   sql_version = "2016-03-23"
-  sql = "SELECT * FROM message_test WHERE sensor_data.temperature <> null"
+  sql = "SELECT * FROM 'message_test'"
   iot_events {
     input_name = "device_input"
     role_arn = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
+  }
+}
+
+resource "aws_iot_topic_rule" "timestream_routing" {
+  name = "timestream_routing"
+  description = "Test rule to write data to timestream"
+  enabled = true
+  sql_version = "2016-03-23"
+  sql = "SELECT * FROM 'message_test'"
+  timestream {
+    database_name = "sensorDataDB"
+    table_name = "sensorDataTable"
+    dimension {
+      name = "deviceId"
+      value = "${uuid()}"
+    }
+    role_arn = "arn:aws:iam::413812240765:role/service-role/sensorData_to_TimestreamRole"
   }
 }
 

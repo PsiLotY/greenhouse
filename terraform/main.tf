@@ -50,6 +50,8 @@ module "events" {
   providers ={
     awscc = awscc
   }
+
+  arn = aws_iam_role.test_role.arn
 }
 
 
@@ -75,6 +77,8 @@ module "core_rules" {
     aws = aws
   }
 }
+
+
 
 # # Call the thing module
 # module "thing" {
