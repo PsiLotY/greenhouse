@@ -84,6 +84,10 @@ resource "awscc_iotevents_detector_model" "window" {
               {
                 iot_topic_publish = {
                   mqtt_topic = "iot/actor_data"
+                  payload = {
+                    content_expression = "\"{\\\"state\\\": \\\"windows_closed\\\"}\"",
+                    type               = "JSON"
+                  }
                 }
               }
             ]
@@ -114,7 +118,12 @@ resource "awscc_iotevents_detector_model" "window" {
               {
                 iot_topic_publish = {
                   mqtt_topic = "iot/actor_data"
+                  payload = {
+                    content_expression = "\"{\\\"state\\\": \\\"windows_open\\\"}\"",
+                    type               = "JSON"
+                  }
                 }
+                
               }
             ]
           }]
@@ -152,12 +161,16 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
         }
         on_enter = {
           events = [{
-            event_name = "enter_sprinklers_off_state",
-            condition  = "true",
+            event_name = "enter_sprinklers_off_state"
+            condition  = "true"
             actions = [
               {
                 iot_topic_publish = {
                   mqtt_topic = "iot/actor_data"
+                  payload = {
+                    content_expression = "\"{\\\"state\\\": \\\"sprinklers_off\\\"}\"",
+                    type               = "JSON"
+                  }
                 }
               }
             ]
@@ -188,6 +201,10 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
               {
                 iot_topic_publish = {
                   mqtt_topic = "iot/actor_data"
+                  payload = {
+                    content_expression = "\"{\\\"state\\\": \\\"sprinklers_on\\\"}\"",
+                    type               = "JSON"
+                  }
                 }
               }
             ]
@@ -203,7 +220,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
 }
 
 resource "awscc_iotevents_detector_model" "light" {
-  detector_model_name        = "Light_Detector"
+  detector_model_name        = "light_Detector"
   detector_model_description = "determines if lights need to be on or off"
   evaluation_method          = "SERIAL"
   role_arn                   = var.arn
@@ -220,7 +237,7 @@ resource "awscc_iotevents_detector_model" "light" {
               actions = [
                 {
                   lambda = {
-                    function_arn = "arn:aws:lambda:eu-central-1:413812240765:function:light_lambda"
+                    function_arn = var.arn
                   }
                 }
               ]
@@ -268,7 +285,7 @@ resource "awscc_iotevents_detector_model" "light" {
               actions = [
                 {
                   lambda = {
-                    function_arn = "arn:aws:lambda:eu-central-1:413812240765:function:light_lambda"
+                    function_arn = var.arn
                   }
                 }
               ]
