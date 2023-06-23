@@ -8,7 +8,9 @@ resource "awscc_iotevents_input" "device_input" {
       json_path = "temperature"
       }, {
       json_path = "light"
-    }]
+      },{
+      json_path = "need_light"
+      }]
   }
   input_name = "device_input"
 }
@@ -23,7 +25,9 @@ resource "awscc_iotevents_input" "device_input2" {
       json_path = "temperature"
       }, {
       json_path = "light"
-    }]
+      },{
+      json_path = "need_light"
+      }]
   }
   input_name = "device_input2"
 }
@@ -38,7 +42,9 @@ resource "awscc_iotevents_input" "device_input3" {
       json_path = "temperature"
       }, {
       json_path = "light"
-    }]
+      },{
+      json_path = "need_light"
+      }]
   }
   input_name = "device_input3"
 }
