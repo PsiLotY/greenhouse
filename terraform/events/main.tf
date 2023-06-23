@@ -3,6 +3,8 @@ resource "awscc_iotevents_input" "device_input" {
     attributes = [{
       json_path = "messageId"
       }, {
+      json_path = "timestamp"
+      }, {
       json_path = "humidity"
       }, {
       json_path = "temperature"
@@ -20,6 +22,8 @@ resource "awscc_iotevents_input" "device_input2" {
     attributes = [{
       json_path = "messageId"
       }, {
+      json_path = "timestamp"
+      }, {
       json_path = "humidity"
       }, {
       json_path = "temperature"
@@ -36,6 +40,8 @@ resource "awscc_iotevents_input" "device_input3" {
   input_definition = {
     attributes = [{
       json_path = "messageId"
+      }, {
+      json_path = "timestamp"
       }, {
       json_path = "humidity"
       }, {
@@ -64,7 +70,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "open_windows"
-              condition  = "$input.device_input2.temperature > 38"
+              condition  = "$input.device_input2.temperature > 25"
               actions    = []
               next_state = "windows_open"
             }
@@ -94,7 +100,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "close_windows"
-              condition  = "$input.device_input2.temperature < 30"
+              condition  = "$input.device_input2.temperature <= 25"
               actions    = []
               next_state = "windows_closed"
             }
