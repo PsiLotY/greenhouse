@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch, call
-from receiver import on_connect, on_message
+from receiver import on_connect, on_message, on_subscribe
 
 
 class TestReceiver(unittest.TestCase):
@@ -14,6 +14,18 @@ class TestReceiver(unittest.TestCase):
         on_connect(client, userdata, flags, response_code)
 
         mock_print.assert_called_once_with("Connected with status: 0")
+
+    @patch("builtins.print")
+    def test_on_subscribe(self, mock_print):
+        client = MagicMock()
+        userdata = MagicMock()
+        msg = MagicMock()
+        msg.topic = "Test topic"
+
+        on_subscribe(client, userdata, msg)
+
+        calls = [call("Message received, topic: ", msg.topic), call(msg.payload)]
+        mock_print.assert_has_calls(calls, any_order=True)
 
     @patch("builtins.print")
     def test_on_message(self, mock_print):
