@@ -66,14 +66,3 @@ module "timestream" {
   }
   region = "eu-central-1"
 }
-
-module "lambda" {
-  source = "./lambda"
-}
-
-module "core_rules" {
-  source = "./core_rules"
-  providers = {
-    aws = aws
-  }
-}

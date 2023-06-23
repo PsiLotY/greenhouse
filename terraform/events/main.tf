@@ -28,6 +28,21 @@ resource "awscc_iotevents_input" "device_input2" {
   input_name = "device_input2"
 }
 
+resource "awscc_iotevents_input" "device_input3" {
+  input_definition = {
+    attributes = [{
+      json_path = "messageId"
+      }, {
+      json_path = "humidity"
+      }, {
+      json_path = "temperature"
+      }, {
+      json_path = "light"
+    }]
+  }
+  input_name = "device_input3"
+}
+
 resource "awscc_iotevents_detector_model" "window" {
   detector_model_name        = "window_events"
   detector_model_description = "monitors and changes the state of the windows"

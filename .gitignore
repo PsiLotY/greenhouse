@@ -9,7 +9,7 @@ client/config.py
 *.pem
 *.key
 *.crt
-
+*.zip
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform
