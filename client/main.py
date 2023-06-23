@@ -62,8 +62,6 @@ def on_proximity(value):
     data['proximity'] = value
     print("proximity: {:.2f}".format(value))
 
-
-
 #gets the sensor data from the connected devive on COM_port through callback functions
 def request_sensor_data(iotee):
     timestamp = int(time.time())
@@ -75,8 +73,6 @@ def request_sensor_data(iotee):
     iotee.request_light()
     iotee.request_proximity()
 
-
-
 #main loop for sending data
 def main():
     iotee = start_iotee(config.COM_port)
@@ -87,13 +83,11 @@ def main():
     iotee.on_light = on_light
     iotee.on_proximity = on_proximity
 
-
     client = connect_to_mqtt()
     client.on_connect = on_connect
     client.on_publish = on_publish
     client.on_message = on_message
 
-    subscribe_to(client, ['test'], 1)    
     while(True):
         request_sensor_data(iotee)
         

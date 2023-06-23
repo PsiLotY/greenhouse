@@ -1,6 +1,3 @@
-import paho.mqtt.client as mqtt
-import config
-import ssl
 from utils import connect_to_mqtt, subscribe_to
 
 
