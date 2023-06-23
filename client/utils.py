@@ -59,6 +59,6 @@ def start_iotee(com_port: str):
     return: 
         iotee: iotee object
     '''
-    iotee = Iotee(config.COM_port)
+    iotee = Iotee(com_port)
     iotee.start()
     return iotee
