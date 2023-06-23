@@ -8,9 +8,9 @@ resource "awscc_iotevents_input" "device_input" {
       json_path = "temperature"
       }, {
       json_path = "light"
-      },{
+      }, {
       json_path = "need_light"
-      }]
+    }]
   }
   input_name = "device_input"
 }
@@ -25,9 +25,9 @@ resource "awscc_iotevents_input" "device_input2" {
       json_path = "temperature"
       }, {
       json_path = "light"
-      },{
+      }, {
       json_path = "need_light"
-      }]
+    }]
   }
   input_name = "device_input2"
 }
@@ -42,9 +42,9 @@ resource "awscc_iotevents_input" "device_input3" {
       json_path = "temperature"
       }, {
       json_path = "light"
-      },{
+      }, {
       json_path = "need_light"
-      }]
+    }]
   }
   input_name = "device_input3"
 }
@@ -73,7 +73,7 @@ resource "awscc_iotevents_detector_model" "window" {
         on_enter = {
           events = [{
             event_name = "enter_windows_closed_state",
-            condition = "true",
+            condition  = "true",
             actions = [
               {
                 iot_topic_publish = {
@@ -103,7 +103,7 @@ resource "awscc_iotevents_detector_model" "window" {
         on_enter = {
           events = [{
             event_name = "enter_windows_open_state",
-            condition = "true",
+            condition  = "true",
             actions = [
               {
                 iot_topic_publish = {
@@ -147,7 +147,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
         on_enter = {
           events = [{
             event_name = "enter_sprinklers_off_state",
-            condition = "true",
+            condition  = "true",
             actions = [
               {
                 iot_topic_publish = {
@@ -177,7 +177,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
         on_enter = {
           events = [{
             event_name = "enter_sprinklers_on_state",
-            condition = "true",
+            condition  = "true",
             actions = [
               {
                 iot_topic_publish = {
@@ -194,4 +194,114 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
     ]
     initial_state_name = "sprinklers_off"
   }
+}
+
+resource "awscc_iotevents_detector_model" "light" {
+  detector_model_name        = "Light_Detector"
+  detector_model_description = "determines if lights need to be on or off"
+  evaluation_method          = "SERIAL"
+  role_arn                   = var.arn
+
+  detector_model_definition = {
+    states = [
+      {
+        state_name = "lights_off",
+        on_input = {
+          events = [
+            {
+              event_name = "input_light_off_state",
+              condition  = "$input.device_input3.light < 60",
+              actions = [
+                {
+                  lambda = {
+                    function_arn = "arn:aws:lambda:eu-central-1:413812240765:function:light_lambda"
+                  }
+                }
+              ]
+            }
+          ],
+          transition_events = [
+            {
+              event_name = "turn_on",
+              condition  = "$input.device_input3.need_need_light == true",
+              actions    = [],
+              next_state = "lights_on"
+            }
+          ]
+        },
+        on_enter = {
+          events = [
+            {
+              event_name = "enter_lights_off_state",
+              condition  = "true",
+              actions = [
+                {
+                  iot_topic_publish = {
+                    mqtt_topic = "iot/actor_data",
+                    payload = {
+                      content_expression = "\"{\\\"state\\\": \\\"light_turned_off\\\"}\"",
+                      type               = "JSON"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        on_exit = {
+          events = []
+        }
+      },
+      {
+        state_name = "lights_on",
+        on_input = {
+          events = [
+            {
+              event_name = "input_light_on_state",
+              condition  = "$input.device_input3.light < 60",
+              actions = [
+                {
+                  lambda = {
+                    function_arn = "arn:aws:lambda:eu-central-1:413812240765:function:light_lambda"
+                  }
+                }
+              ]
+            }
+          ],
+          transition_events = [
+            {
+              event_name = "turn_off",
+              condition  = "$input.device_input3.need_need_light == false",
+              actions    = [],
+              next_state = "lights_off"
+            }
+          ]
+        },
+        on_enter = {
+          events = [
+            {
+              event_name = "enter_lights_off_state",
+              condition  = "true",
+              actions = [
+                {
+                  iot_topic_publish = {
+                    mqtt_topic = "iot/actor_data",
+                    payload = {
+                      content_expression = "\"{\\\"state\\\": \\\"light_turned_on\\\"}\"",
+                      type               = "JSON"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        on_exit = {
+          events = []
+        }
+      }
+    ],
+    initial_state_name = "lights_off"
+  }
+
 }
