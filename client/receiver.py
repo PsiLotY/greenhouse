@@ -1,3 +1,4 @@
+import json
 from utils import connect_to_mqtt, subscribe_to
 
 
@@ -11,7 +12,8 @@ def on_subscribe(client, userdata, msg):
 
 def on_message(client, userdata, msg):
     print("Message received, topic: ", msg.topic)
-    print("Message payload: ", msg.payload.decode())
+    message = json.dumps(msg.payload.decode())
+    print("Message payload: ", message)
 
 #main loop for receiving data
 def main():
@@ -20,7 +22,7 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
 
-    subscribe_to(client, ['iot/debugging', 'iot/error', 'iot/actor_data'], 1)
+    subscribe_to(client, ['iot/error', 'iot/actor_data'], 1)
     client.loop_forever()
     
     
