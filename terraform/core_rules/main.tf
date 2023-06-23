@@ -1,19 +1,16 @@
-
-
-resource "aws_iot_topic_rule" "example_rule" {
-  name        = "example-rule"
-  description = "Example IoT Core rule"
-
-  sql = "SELECT * FROM 'my/topic'"
-
-  actions {
-    republish {
-      topic = "processed/topic"
-    }
+resource "aws_iot_topic_rule" "test_rule" {
+  name        = "test_rule"
+  description = "Testing whether the rule works with iotevents"
+  enabled     = true
+  sql_version = "2016-03-23"
+  sql = "SELECT * FROM message_test WHERE sensor_data.temperature <> null"
+  iot_events {
+    input_name = "device_input"
+    role_arn = "arn:aws:iam::413812240765:role/service-role/IoTCoreRole"
   }
 }
 
-
+/*
 resource "aws_iam_role" "example" {
   name = "iot_timestream_role"
   assume_role_policy = <<EOF
@@ -88,7 +85,7 @@ resource "aws_iam_role" "mqtt_to_timestream_role" {
   ]
 }
 EOF
-}
+}*/
 
 
 
