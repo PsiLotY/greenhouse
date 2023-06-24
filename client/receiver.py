@@ -58,7 +58,7 @@ def on_message(client, userdata, msg):
         display_text(text)
         print('Lights are off')
 
-#test change
+
 def process_text(text):
     global old_texts
     old_texts.append(text)
