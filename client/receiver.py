@@ -16,7 +16,7 @@ def on_connect(client, userdata, flags, response_code):
     print('Connected with status: {0}'.format(response_code))
 
 def on_subscribe(client, userdata, msg):
-    print("Message received, topic: ", msg.topic)
+    print('Message received, topic: ', msg.topic)
     print(msg.payload)
 
 def on_message(client, userdata, msg):
@@ -75,7 +75,7 @@ def process_text(text):
     # create a new text of 3 elements from old_texts, seperated by \n
     new_text = ''
     for old_text in old_texts:
-        new_text += f"{old_text}\n"
+        new_text += f'{old_text}\n'
     return new_text
 
 
