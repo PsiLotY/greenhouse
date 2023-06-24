@@ -16,22 +16,14 @@ def signal_handler(signal, frame, iotee):
 
 
 # define callback functions for mqtt
-connflag = False
 
 
 def on_connect(client, userdata, flags, response_code):
-    global connflag
-    connflag = True
     print('Connected with status: {0}'.format(response_code))
 
 
 def on_publish(client, userdata, mid):
     print('message number:', mid)
-
-
-def on_message(client, userdata, msg):
-    print('Message received, topic: ', msg.topic)
-    print('Message payload: ', msg.payload.decode())
 
 
 # message template
@@ -80,6 +72,7 @@ def on_button_pressed(value):
         data['humidity'] = 10  # < 20
     elif value == 'Y':
         data['humidity'] = 30  # >= 20
+    print('Button press data:', data)
     ran = True
 
 
@@ -101,9 +94,7 @@ button_mode = False
 def main(button_mode):
     global ran
     iotee = start_iotee(config.COM_port)
-    signal.signal(
-        signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee)
-    )
+    signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
     iotee.on_temperature = on_temperature
     iotee.on_humidity = on_humidity
@@ -114,19 +105,16 @@ def main(button_mode):
     client = connect_to_mqtt()
     client.on_connect = on_connect
     client.on_publish = on_publish
-    client.on_message = on_message
-    i = 0
+
     while True:
         try:
             if button_mode == False:
                 request_sensor_data(iotee)
-                print(data)
                 sleep(1)
                 client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
                 sleep(4)
             else:
                 if ran == True:
-                    print(data)
                     client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
                     ran = False
                 sleep(1)
@@ -139,4 +127,4 @@ def main(button_mode):
 
 
 if __name__ == '__main__':
-    main(button_mode=True)
+    main(button_mode=False)
