@@ -2,12 +2,12 @@ resource "aws_timestreamwrite_database" "timestream_base" {
   database_name = var.database_name
 
   tags = {
-    Name = "value"
+    Name = "timestream database, created with terraform"
   }
 }
 
 resource "aws_timestreamwrite_table" "timestream_table" {
-  database_name = aws_timestreamwrite_database.terra_timestrea.database_name
+  database_name = aws_timestreamwrite_database.timestream_base.database_name
   table_name    = var.table_name
 
   retention_properties {

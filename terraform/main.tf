@@ -16,9 +16,8 @@ terraform {
   required_version = ">= 1.2.0"
 }
 
-# Define your AWS provider configuration
 provider "aws" {
-  region = "eu-central-1"  # Update with your desired region
+  region = "eu-central-1"  
   access_key = var.access_key 
   secret_key = var.secret_key 
 }
@@ -30,10 +29,8 @@ provider "awscc" {
 }
 
 
-# Call the thing module
 module "thing" {
   source = "./thing"
-
   # Pass any required variables to the module
   thing_name        = "terra_thing"
   thing_attributes  = {
@@ -50,17 +47,15 @@ module "events" {
   providers ={
     awscc = awscc
   }
-
   arn = aws_iam_role.core_role.arn
 }
-
 
 module "timestream" {
   source = "./timestream"
 
   # Pass any required variables to the module
-  database_name = "terra_database"
-  table_name  = "terra_table"
+  database_name = "sensorDataDB"
+  table_name  = "sensorDataTable"
   providers = {
     aws = aws
   }

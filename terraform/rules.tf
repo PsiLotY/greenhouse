@@ -16,11 +16,6 @@ resource "aws_iot_topic_rule" "iot_rule" {
     input_name = "device_input3"
     role_arn = aws_iam_role.core_role.arn
   }
-  #TODO only for debugging remove this later
-  republish {
-    role_arn = aws_iam_role.core_role.arn
-    topic = "iot/debugging"
-  }
   error_action {
     republish {
       role_arn = aws_iam_role.core_role.arn
