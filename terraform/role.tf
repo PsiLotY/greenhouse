@@ -2,7 +2,7 @@ resource "aws_iam_role" "core_role" {
   name = "core_role"
   assume_role_policy = file("${path.module}/assume_role_policy.json")
   tags = {
-    tag-key = "tag-value"
+    tag-key = "core_role for everything, created with terraform"
   }
 }
 

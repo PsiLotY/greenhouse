@@ -20,7 +20,6 @@ def on_subscribe(client, userdata, msg):
     print(msg.payload)
 
 def on_message(client, userdata, msg):
-    global text
     topic = msg.topic
     message = json.loads(msg.payload.decode())
     # print(message)
