@@ -19,50 +19,43 @@ def on_subscribe(client, userdata, msg):
     print('Message received, topic: ', msg.topic)
     print(msg.payload)
 
+
 def on_message(client, userdata, msg):
-    topic = msg.topic
     message = json.loads(msg.payload.decode())
-    # print(message)
     if message['state'] == 'sprinklers_on':
         iotee.set_led(255, 0, 0) #red
         display_text = 'Sprinklers \nare on'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Sprinklers are on')
 
     elif message['state'] == 'sprinklers_off':
         iotee.set_led(0, 255, 0) #green
         display_text = 'Sprinklers \nare off'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Sprinklers are off')
 
     elif message['state'] == 'windows_closed':
         iotee.set_led(0, 0, 255) #blue
         display_text = 'Windows \nare closed'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Windows are closed')
 
     elif message['state'] == 'windows_open':
         iotee.set_led(255, 255, 0) #yellow
         display_text = 'Windows \nare open'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Windows are open')
 
     elif message['state'] == 'lights_on':
         iotee.set_led(0, 255, 255) #cyan
         display_text = 'Lights \nare on'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Lights are on')
 
     elif message['state'] == 'lights_off':
         iotee.set_led(255, 0, 255) #purple
         display_text = 'Lights \nare off'
-        text = process_text(display_text)
-        iotee.set_display(text)
+        display_text(display_text)
         print('Lights are off')
 
 
@@ -78,6 +71,9 @@ def process_text(text):
         new_text += f'{old_text}\n'
     return new_text
 
+def display_text(text):
+    text = process_text(display_text)
+    iotee.set_display(text)
 
 old_texts = []
 iotee = start_iotee(config.COM_port)
