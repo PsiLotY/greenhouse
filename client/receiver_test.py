@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch, call
-from receiver import on_connect, on_message, on_subscribe
+from receiver import on_connect, on_message, on_subscribe, process_text
 
 
 class TestReceiver(unittest.TestCase):
@@ -42,6 +42,26 @@ class TestReceiver(unittest.TestCase):
             call('Message payload: ', '"Test payload"'),
         ]
         mock_print.assert_has_calls(calls, any_order=True)
+
+    def test_process_text(self):
+        text = 'Test text'
+        processed_text = process_text(text)
+        self.assertEqual(processed_text, 'Test text\n')
+        
+        text = 'Test text 2'
+        processed_text = process_text(text)
+        self.assertEqual(processed_text, 'Test text 2\nTest text\n')
+        
+        text = 'Test text 3'
+        processed_text = process_text(text)
+        self.assertEqual(processed_text, 'Test text 3\nTest text 2\nTest text\n')
+        
+        text = 'Test text 4'
+        processed_text = process_text(text)
+        self.assertEqual(processed_text, 'Test text 4\nTest text 3\nTest text 2\n')
+        
+    def display_text(self):
+        pass
 
 
 if __name__ == '__main__':
