@@ -57,7 +57,7 @@ resource "awscc_iotevents_input" "device_input3" {
 
 resource "awscc_iotevents_detector_model" "window" {
   detector_model_name        = "window_events"
-  detector_model_description = "monitors and changes the state of the windows"
+  detector_model_description = "monitors and changes the state of the windows, created with terraform"
   evaluation_method          = "SERIAL"
   role_arn                   = var.arn
 
@@ -140,7 +140,7 @@ resource "awscc_iotevents_detector_model" "window" {
 
 resource "awscc_iotevents_detector_model" "sprinkler" {
   detector_model_name        = "sprinkler_events"
-  detector_model_description = "Starts and stops the sprinklers based on humidity"
+  detector_model_description = "Starts and stops the sprinklers based on humidity, created with terraform"
   evaluation_method          = "SERIAL"
   role_arn                   = var.arn
 
@@ -221,7 +221,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
 
 resource "awscc_iotevents_detector_model" "light" {
   detector_model_name        = "light_Detector"
-  detector_model_description = "determines if lights need to be on or off"
+  detector_model_description = "determines if lights need to be on or off, created with terraform"
   evaluation_method          = "SERIAL"
   role_arn                   = var.arn
 

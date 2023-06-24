@@ -1,6 +1,6 @@
 resource "aws_iot_topic_rule" "iot_rule" {
   name        = "iot_rule"
-  description = "Testing whether the rule works with iotevents"
+  description = "Testing whether the rule works with iotevents, created with terraform"
   enabled     = true
   sql_version = "2016-03-23"
   sql = "SELECT * FROM 'iot/sensor_data'"
@@ -31,10 +31,10 @@ resource "aws_iot_topic_rule" "iot_rule" {
 
 resource "aws_iot_topic_rule" "timestream_routing" {
   name = "timestream_routing"
-  description = "Test rule to write data to timestream"
+  description = "rule to route all data on sensor_data to timestream, created with terraform"
   enabled = true
   sql_version = "2016-03-23"
-  sql = "SELECT * FROM 'message_test'"
+  sql = "SELECT * FROM 'iot/sensor_data'"
   timestream {
     database_name = "sensorDataDB"
     table_name = "sensorDataTable"

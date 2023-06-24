@@ -4,7 +4,7 @@ resource "aws_iot_thing" "my_thing" {
 }
 
 resource "aws_iot_policy" "my_policy" {
-  name   = "my_terra_policy"
+  name   = "iot_policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
