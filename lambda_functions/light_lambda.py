@@ -6,17 +6,7 @@ from dateutil import tz
 client = boto3.client('iot-data', region_name='eu-central-1')
 timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
 
-def lambda_handler(event, context):
-    message = event
-    
-    utc_time = datetime.utcnow()
-    source_tz = tz.gettz('UTC')
-    target_tz = tz.gettz('Europe/Berlin')
-    
-    current_time = utc_time.replace(tzinfo=source_tz).astimezone(target_tz).time()
-    target_time = time(17, 0)
-    
-    # Formulate the SQL query
+def get_light_data():
     query = """
         WITH light_above_threshold AS (
             SELECT time, measure_value::double
@@ -32,12 +22,13 @@ def lambda_handler(event, context):
         )
         SELECT measure_value::double, time, next_time
         FROM all_rows
-        WHERE measure_value::double > 2
+        WHERE measure_value::double > 60
     """
 
-    # Execute the query
     response = timestream_client.query(QueryString=query)
-    
+    return response
+
+def get_sunlight_duration(response):
     rows = response['Rows']
     total_sunlight_duration = 0
     for row in rows:
@@ -51,28 +42,45 @@ def lambda_handler(event, context):
         duration = round(duration.total_seconds())
         
         total_sunlight_duration = total_sunlight_duration + duration
-        
+    return total_sunlight_duration
+
+def evaluate_if_light(total_sunlight_duration, message):
+    if total_sunlight_duration > 28800:
+        print('enough sunlight')
+        message["need_light"] = False
+        response = client.publish(
+            topic='iot/sensor_data',
+            qos=1,
+            payload=json.dumps(message)
+        )
+        return "doesn't need light"
+    else:
+        print('too little sunlight')
+        message["need_light"] = True
+        response = client.publish(
+            topic='iot/sensor_data',
+            qos=1,
+            payload=json.dumps(message)
+        )
+        return 'needs light'
+
+def lambda_handler(event, context):
+    message = event
     
-    if current_time < target_time:
-        print('after 6')
+    utc_time = datetime.utcnow()
+    source_tz = tz.gettz('UTC')
+    target_tz = tz.gettz('Europe/Berlin')
+    
+    current_time = utc_time.replace(tzinfo=source_tz).astimezone(target_tz).time()
+    target_time = time(17, 0)
+    
+    response = get_light_data()
+    
+    total_sunlight_duration = get_sunlight_duration(response)
         
-        if total_sunlight_duration > 28800:
-            print('enough sunlight')
-            message["need_light"] = False
-            response = client.publish(
-                topic='iot/sensor_data',
-                qos=1,
-                payload=json.dumps(message)
-            )
-            return 'nolight'
-        else:
-            print('too little sunlight')
-            message["need_light"] = True
-            response = client.publish(
-                topic='iot/sensor_data',
-                qos=1,
-                payload=json.dumps(message)
-            )
-            return 'needslight'
+    # the detector model only runs this lambda if current light < 60. 
+    # thus no checks for that are needed
+    if current_time > target_time:
+        evaluate_if_light(total_sunlight_duration, message)
             
     return "not after 6"
