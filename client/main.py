@@ -62,6 +62,19 @@ def on_proximity(value):
     data['proximity'] = value
     print("proximity: {:.2f}".format(value))
 
+def on_button_pressed(value):
+    global ran
+    print("button pressed:", value)
+    if value == 'A':
+        data['temperature'] = 30 # >25
+    elif value == 'B':
+        data['temperature'] = 20 # <=25
+    elif value == 'X':
+        data['humidity'] = 10 # < 20
+    elif value == 'Y':
+        data['humidity'] = 30 # >= 20
+    ran = True
+
 #gets the sensor data from the connected devive on COM_port through callback functions
 def request_sensor_data(iotee):
     timestamp = int(time.time())
@@ -73,8 +86,11 @@ def request_sensor_data(iotee):
     iotee.request_light()
     iotee.request_proximity()
 
+ran = False
+button_mode = False
 #main loop for sending data
-def main():
+def main(button_mode):
+    global ran
     iotee = start_iotee(config.COM_port)
     signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
@@ -82,20 +98,27 @@ def main():
     iotee.on_humidity = on_humidity
     iotee.on_light = on_light
     iotee.on_proximity = on_proximity
+    iotee.on_button_pressed = on_button_pressed
 
     client = connect_to_mqtt()
     client.on_connect = on_connect
     client.on_publish = on_publish
     client.on_message = on_message
-
+    i = 0
     while(True):
-        request_sensor_data(iotee)
-        
-        sleep(1)
-        client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
-        
-        sleep(4)
+        if button_mode == False:
+            request_sensor_data(iotee)
+            print(data)
+            sleep(1)
+            client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
+            sleep(4)
+        else:
+            if ran == True:
+                print(data)
+                client.publish('iot/sensor_data', payload=json.dumps(data), qos=1)
+                ran = False
+            sleep(1)
 
 if __name__ == '__main__':
-    main()
+    main(button_mode=True)
 
