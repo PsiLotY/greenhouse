@@ -93,7 +93,7 @@ button_mode = False
 # main loop for sending data
 def main(button_mode):
     global ran
-    iotee = start_iotee(config.COM_port)
+    iotee = start_iotee(config.COM_port) # manually change the COM Port if you have multiple devices
     signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
     iotee.on_temperature = on_temperature
@@ -127,4 +127,4 @@ def main(button_mode):
 
 
 if __name__ == '__main__':
-    main(button_mode=False)
+    main(button_mode=True)
