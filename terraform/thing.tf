@@ -1,10 +1,12 @@
 resource "aws_iot_thing" "my_thing" {
-  name = var.thing_name
-  attributes = var.thing_attributes
+  name = "IoTGateway"
+  attributes = {
+    arn = aws_iam_role.core_role.arn
+    }
 }
 
 resource "aws_iot_policy" "my_policy" {
-  name   = "iot_policy"
+  name   = "Gateway_policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -32,7 +34,7 @@ resource "tls_private_key" "my_private_key" {
 resource "tls_self_signed_cert" "self_signed" {
   private_key_pem       = tls_private_key.my_private_key.private_key_pem
   subject {
-    common_name         = var.thing_name
+    common_name         = aws_iot_thing.my_thing.name
   }
   
   validity_period_hours = 8760  # 1 year
