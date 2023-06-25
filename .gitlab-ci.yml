@@ -8,7 +8,7 @@ build:
 test:
     stage: test
     script:
-      - python client/unit_tests.py
+      - python client/tests/unit_tests.py
 
 include:
   - template: Terraform.gitlab-ci.yml
