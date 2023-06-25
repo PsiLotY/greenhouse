@@ -1,7 +1,7 @@
 resource "awscc_iotevents_input" "device_input" {
   input_definition = {
     attributes = [{
-      json_path = "messageId"
+      json_path = "message_id"
       }, {
       json_path = "timestamp"
       }, {
@@ -20,7 +20,7 @@ resource "awscc_iotevents_input" "device_input" {
 resource "awscc_iotevents_input" "device_input2" {
   input_definition = {
     attributes = [{
-      json_path = "messageId"
+      json_path = "message_id"
       }, {
       json_path = "timestamp"
       }, {
@@ -39,7 +39,7 @@ resource "awscc_iotevents_input" "device_input2" {
 resource "awscc_iotevents_input" "device_input3" {
   input_definition = {
     attributes = [{
-      json_path = "messageId"
+      json_path = "message_id"
       }, {
       json_path = "timestamp"
       }, {
@@ -220,7 +220,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
 }
 
 resource "awscc_iotevents_detector_model" "light" {
-  detector_model_name        = "light_Detector"
+  detector_model_name        = "light_detector"
   detector_model_description = "determines if lights need to be on or off, created with terraform"
   evaluation_method          = "SERIAL"
   role_arn                   = aws_iam_role.core_role.arn

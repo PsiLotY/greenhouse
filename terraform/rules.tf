@@ -31,8 +31,8 @@ resource "aws_iot_topic_rule" "timestream_routing" {
   sql_version = "2016-03-23"
   sql = "SELECT * FROM 'iot/sensor_data'"
   timestream {
-    database_name = "sensorDataDB"
-    table_name = "sensorDataTable"
+    database_name = "sensor_data_db"
+    table_name = "sensor_data_table"
     dimension {
       name = "deviceId"
       value = "${uuid()}"

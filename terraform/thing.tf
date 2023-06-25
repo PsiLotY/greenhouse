@@ -1,12 +1,12 @@
 resource "aws_iot_thing" "my_thing" {
-  name = "IoTGateway"
+  name = "iot_gateway"
   attributes = {
     arn = aws_iam_role.core_role.arn
     }
 }
 
 resource "aws_iot_policy" "my_policy" {
-  name   = "Gateway_policy"
+  name   = "gateway_policy"
   policy = <<EOF
 {
   "Version": "2012-10-17",
