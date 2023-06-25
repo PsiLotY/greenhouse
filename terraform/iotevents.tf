@@ -59,7 +59,7 @@ resource "awscc_iotevents_detector_model" "window" {
   detector_model_name        = "window_events"
   detector_model_description = "monitors and changes the state of the windows, created with terraform"
   evaluation_method          = "SERIAL"
-  role_arn                   = var.arn
+  role_arn                   = aws_iam_role.core_role.arn
 
   detector_model_definition = {
     states = [
@@ -142,7 +142,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
   detector_model_name        = "sprinkler_events"
   detector_model_description = "Starts and stops the sprinklers based on humidity, created with terraform"
   evaluation_method          = "SERIAL"
-  role_arn                   = var.arn
+  role_arn                   = aws_iam_role.core_role.arn
 
   detector_model_definition = {
     states = [
@@ -223,7 +223,7 @@ resource "awscc_iotevents_detector_model" "light" {
   detector_model_name        = "light_Detector"
   detector_model_description = "determines if lights need to be on or off, created with terraform"
   evaluation_method          = "SERIAL"
-  role_arn                   = var.arn
+  role_arn                   = aws_iam_role.core_role.arn
 
   detector_model_definition = {
     states = [
@@ -237,7 +237,7 @@ resource "awscc_iotevents_detector_model" "light" {
               actions = [
                 {
                   lambda = {
-                    function_arn = var.arn
+                    function_arn = aws_iam_role.core_role.arn
                   }
                 }
               ]
@@ -285,7 +285,7 @@ resource "awscc_iotevents_detector_model" "light" {
               actions = [
                 {
                   lambda = {
-                    function_arn = var.arn
+                    function_arn = aws_iam_role.core_role.arn
                   }
                 }
               ]
