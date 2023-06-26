@@ -11,71 +11,34 @@ class TestOnMessage(unittest.TestCase):
         self.userdata_mock = Mock()
         self.msg_mock = Mock()
 
-    def test_sprinklers_on(self):
-        self.msg_mock.payload = json.dumps({"state": "sprinklers_on"}).encode()
+    def message_test_helper(self, state, led_args):
+        self.msg_mock.payload = json.dumps({"state": state}).encode()
 
         with patch("receiver.display_text") as display_text_mock:
             on_message(
                 self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
             )
 
-        self.iotee_mock.set_led.assert_called_with(255, 0, 0)
+        self.iotee_mock.set_led.assert_called_with(*led_args)
         display_text_mock.assert_called()
+
+    def test_sprinklers_on(self):
+        self.message_test_helper("sprinklers_on", (255, 0, 0))
 
     def test_sprinklers_off(self):
-        self.msg_mock.payload = json.dumps({"state": "sprinklers_off"}).encode()
-
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
-
-        self.iotee_mock.set_led.assert_called_with(0, 255, 0)
-        display_text_mock.assert_called()
+        self.message_test_helper("sprinklers_off", (0, 255, 0))
 
     def test_windows_closed(self):
-        self.msg_mock.payload = json.dumps({"state": "windows_closed"}).encode()
-
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
-
-        self.iotee_mock.set_led.assert_called_with(0, 0, 255)
-        display_text_mock.assert_called()
+        self.message_test_helper("windows_closed", (0, 0, 255))
 
     def test_windows_open(self):
-        self.msg_mock.payload = json.dumps({"state": "windows_open"}).encode()
-
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
-
-        self.iotee_mock.set_led.assert_called_with(255, 255, 0)
-        display_text_mock.assert_called()
+        self.message_test_helper("windows_open", (255, 255, 0))
 
     def test_lights_on(self):
-        self.msg_mock.payload = json.dumps({"state": "lights_on"}).encode()
-
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
-
-        self.iotee_mock.set_led.assert_called_with(0, 255, 255)
-        display_text_mock.assert_called()
+        self.message_test_helper("lights_on", (0, 255, 255))
 
     def test_lights_off(self):
-        self.msg_mock.payload = json.dumps({"state": "lights_off"}).encode()
-
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
-
-        self.iotee_mock.set_led.assert_called_with(255, 0, 255)
-        display_text_mock.assert_called()
+        self.message_test_helper("lights_off", (255, 0, 255))
 
 
 if __name__ == "__main__":
