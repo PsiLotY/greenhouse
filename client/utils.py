@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
-import config
 import ssl
 from iotee import Iotee
+import config
 
 def connect_to_mqtt():
     '''
