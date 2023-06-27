@@ -1,17 +1,17 @@
 build:
-    stage: build
-    image: python:3.6
-    script:
-      - pip install flake8 pytest pytest-cov
-      - pip install -r requirements.txt
+  stage: build
+  image: python:3.6
+  script:
+    - pip install flake8 pytest pytest-cov
+    - pip install -r requirements.txt
 
 test:
-    stage: test
-    script:
-      - python client/tests/unit_tests.py
+  stage: test
+  script:
+    - python -m unittest discover -s ./ -p '*_test.py'
 
 include:
   - template: Terraform.gitlab-ci.yml
 
-variables: 
+variables:
   TF_ROOT: "terraform"
