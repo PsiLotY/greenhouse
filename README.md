@@ -1,8 +1,8 @@
 # Greenhouse
 
 ## Setup
-First, the project is using the Pico Enviro+ Module with the software from the following (link)[https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages].
-To install the firmware you need the connect your device to your pc while holding down the reset button at the back of case. This will open the file explorer. Now you can upload the firmware (.uf2 file) onto the module.
+First, the project is uses the Pico Enviro+ module with the software from the following (link)[https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages].
+To install the firmware, you need to connect your device to your pc while holding down the reset button on the back of case. This will open the file explorer. Now you can upload the firmware (.uf2 file) to the module.
 
 ### Device Code Setup
 To add the python packages for the project you can run `pip install -r requirements.txt`.
