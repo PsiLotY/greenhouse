@@ -123,7 +123,7 @@ resource "awscc_iotevents_detector_model" "window" {
                     type               = "JSON"
                   }
                 }
-                
+
               }
             ]
           }]
