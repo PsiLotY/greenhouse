@@ -7,6 +7,15 @@ client = boto3.client('iot-data', region_name='eu-central-1')
 timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
 
 def get_light_data():
+    '''Sends a query to the timestream database gathering all light data from today which value is above 60 and the time
+    from the next row
+    
+    Parameters: 
+        None
+    
+    Returns:
+        response (dict): a dictionary containing the response from the timestream query
+    '''
     query = """
         WITH light_above_threshold AS (
             SELECT time, measure_value::double
@@ -28,7 +37,16 @@ def get_light_data():
     response = timestream_client.query(QueryString=query)
     return response
 
-def get_sunlight_duration(response):
+def get_sunlight_duration(response: dict):
+    '''Iterates the response dictionary and adds the duration between a row which is over the threshold of light 
+    exposure and the next row to a total duration
+    
+    Parameters:
+        response (dict): a dictionary containing the response from the timestream query
+    
+    Returns:
+        total_sunlight_duration (int): the total duration of sunlight of the day in seconds
+    '''
     rows = response['Rows']
     total_sunlight_duration = 0
     for row in rows:
@@ -44,9 +62,20 @@ def get_sunlight_duration(response):
         total_sunlight_duration = total_sunlight_duration + duration
     return total_sunlight_duration
 
-def evaluate_if_light(total_sunlight_duration, message):
+def evaluate_if_light(total_sunlight_duration: int, message: dict):
+    '''Compares the total duration of sunlight of the day with a minimum exposure of sunlight for a day and publishes
+    a message to the broker with a message if the plant needs light or not. The message is beeing sent to the topic
+    'iot/sensor_data' so it gets picked up by the IoT events Detector Model which looks for the message 'need_light'
+    to transition to the next state
+    
+    Parameters:
+        total_sunlight_duration (int): the total duration of sunlight of the day in seconds
+        message (dict): a dictionary containing the message from the iotee device
+        
+    Returns:
+        text (str): a string containing the message to be sent to the iotee device
+    '''
     if total_sunlight_duration > 28800:
-        print('enough sunlight')
         message["need_light"] = False
         response = client.publish(
             topic='iot/sensor_data',
@@ -55,7 +84,6 @@ def evaluate_if_light(total_sunlight_duration, message):
         )
         return "doesn't need light"
     else:
-        print('too little sunlight')
         message["need_light"] = True
         response = client.publish(
             topic='iot/sensor_data',
@@ -65,22 +93,31 @@ def evaluate_if_light(total_sunlight_duration, message):
         return 'needs light'
 
 def lambda_handler(event, context):
+    '''
+    Parameters:
+        event (dict): a dictionary containing the message from the iotee device
+        context (dict): a dictionary containing the context of the lambda function
+        
+    Returns:
+        text (str): a string containing the message to be sent to the iotee device
+    '''
     message = event
     
+    # get current german time
     utc_time = datetime.utcnow()
     source_tz = tz.gettz('UTC')
     target_tz = tz.gettz('Europe/Berlin')
-    
     current_time = utc_time.replace(tzinfo=source_tz).astimezone(target_tz).time()
-    target_time = time(17, 0)
     
-    response = get_light_data()
+    target_time = time(18, 0)
     
-    total_sunlight_duration = get_sunlight_duration(response)
-        
+    # checks if the current time is after 19 o'clock and prusumuably the sun is not giving enough light anymore
     # the detector model only runs this lambda if current light < 60. 
     # thus no checks for that are needed
     if current_time > target_time:
+        response = get_light_data()
+        total_sunlight_duration = get_sunlight_duration(response)
         evaluate_if_light(total_sunlight_duration, message)
-            
-    return "not after 6"
+        return "after 6"
+    else:
+        return "not after 6"
