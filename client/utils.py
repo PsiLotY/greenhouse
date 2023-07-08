@@ -4,11 +4,12 @@ from iotee import Iotee
 import config
 
 def connect_to_mqtt():
-    '''
-    Connects to a mqtt broker with tls encryption 
-    params: 
+    '''Connects to a mqtt broker with tls encryption 
+    
+    Parameters: 
         None
-    return: 
+        
+    Returns: 
         client: mqtt client object
     '''
     mqtt_url = config.mqtt_url
@@ -19,11 +20,12 @@ def connect_to_mqtt():
     return client
 
 def set_tls(client: mqtt.Client):
-    '''
-    Sets the tls encryption for the mqtt client
-    params: 
+    '''Sets the tls encryption for the mqtt client
+    
+    Parameters: 
         client: mqtt client object
-    return: 
+        
+    Returns: 
         None
     '''
     root_ca = config.root_ca
@@ -38,13 +40,14 @@ def set_tls(client: mqtt.Client):
     
 
 def subscribe_to(client: mqtt.Client, topics: list, qos: int):
-    '''
-    Subscribes to a list of topics 
-    params: 
-        client: mqtt client object
-        topics: list of topics to subscribe to
-        qos: quality of service
-    return: 
+    '''Subscribes to a list of topics 
+    
+    Parameters: 
+        client (Client): mqtt client object
+        topics (list): list of topics to subscribe to
+        qos (int): quality of service
+        
+    Returns: 
         None
     '''
     for topic in topics:
@@ -52,11 +55,12 @@ def subscribe_to(client: mqtt.Client, topics: list, qos: int):
 
 
 def start_iotee(com_port: str):
-    '''
-    Starts a thread for the iotee device 
-    params: 
-        com_port: com port where the iotee device is connected to
-    return: 
+    '''Starts a thread for the iotee device 
+    
+    Parameters: 
+        com_port (str): com port where the iotee device is connected to
+        
+    Returns: 
         iotee: iotee object
     '''
     iotee = Iotee(com_port)
