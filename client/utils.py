@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqtt
 import ssl
 from iotee import Iotee
+import json
 
 #the try is needed to have both the scripts and tests working
 try:

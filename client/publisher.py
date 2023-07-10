@@ -9,11 +9,6 @@ import time
 
 #the try is needed to have both the scripts and tests working
 try:
-    import config
-except ModuleNotFoundError:
-    from client import config
-    
-try:
     from utils import connect_to_mqtt, start_iotee
 except ModuleNotFoundError:
     from client.utils import connect_to_mqtt, start_iotee
