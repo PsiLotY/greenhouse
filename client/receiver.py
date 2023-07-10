@@ -2,8 +2,9 @@ import json
 from utils import connect_to_mqtt, subscribe_to, start_iotee
 import sys
 import signal
-import config
 from functools import partial
+
+COM_PORT = "COM3"
 
 def signal_handler(signal:int, frame: object, iotee: object):
     '''Handler function that stops the iotee thread on ctrl+c
@@ -121,7 +122,6 @@ def display_text(iotee: object, text: str):
     Returns:
         None
     '''
-    print(type(iotee))
     text = process_text(text)
     iotee.set_display(text)
 
@@ -130,7 +130,7 @@ old_texts = []
 #main loop for receiving data
 def main():
     '''Main loop that starts the iotee thread, connects to the mqtt broker, and subscribes to the topics'''
-    iotee = start_iotee(config.COM_port)
+    iotee = start_iotee(COM_PORT)
     signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
     client = connect_to_mqtt()

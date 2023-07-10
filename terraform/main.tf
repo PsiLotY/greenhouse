@@ -27,3 +27,8 @@ provider "awscc" {
   access_key = var.access_key
   secret_key = var.secret_key
 }
+
+
+data "aws_iot_endpoint" "current" {
+  endpoint_type = "iot:Data-ATS"
+}

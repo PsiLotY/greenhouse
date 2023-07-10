@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import ssl
 from iotee import Iotee
-import config
+import json
 
 def connect_to_mqtt():
     '''Connects to a mqtt broker with tls encryption 
@@ -12,7 +12,10 @@ def connect_to_mqtt():
     Returns: 
         client: mqtt client object
     '''
-    mqtt_url = config.mqtt_url
+    # get endpoint from terraform state file
+    with open('./terraform/terraform.tfstate', 'r') as state_file:
+        state_data = json.load(state_file)
+    mqtt_url = state_data['outputs']['iot_core_endpoint']['value']
     client = mqtt.Client()
     set_tls(client)
     print ('Connecting to AWS IoT Broker...')
@@ -28,9 +31,9 @@ def set_tls(client: mqtt.Client):
     Returns: 
         None
     '''
-    root_ca = config.root_ca
-    public_crt = config.public_crt  
-    private_key = config.private_key
+    root_ca = 'client/certs/root-CA.crt'
+    public_crt = 'client/certs/Anjo_Laptop.cert.pem'
+    private_key = 'client/certs/Anjo_Laptop.private.key'
     client.tls_set( root_ca,
                     certfile = public_crt,
                     keyfile = private_key,
