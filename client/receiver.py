@@ -1,8 +1,18 @@
 import json
-from utils import connect_to_mqtt, subscribe_to, start_iotee
 import sys
 import signal
 from functools import partial
+#the try is needed to have both the scripts and tests working
+try:
+    import config
+except ModuleNotFoundError:
+    from client import config
+    
+try:
+    from utils import connect_to_mqtt, subscribe_to, start_iotee
+except ModuleNotFoundError:
+    from client.utils import connect_to_mqtt, subscribe_to, start_iotee
+
 
 COM_PORT = "COM3"
 

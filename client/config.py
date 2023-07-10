@@ -1,0 +1,5 @@
+mqtt_url = ''
+root_ca = ''
+public_crt = ''
+private_key = ''
+COM_port = ''

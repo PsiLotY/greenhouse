@@ -19,7 +19,7 @@ def get_light_data():
     query = """
         WITH light_above_threshold AS (
             SELECT time, measure_value::double
-            FROM sensorDataDB.sensorDataTable
+            FROM sensor_data_db.sensor_data_table
             WHERE measure_name = 'light'
                 AND time >= DATE_TRUNC('day', NOW())
         ),
