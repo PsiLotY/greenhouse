@@ -38,8 +38,8 @@ def set_tls(client: mqtt.Client):
         None
     '''
     root_ca = 'client/certs/root-CA.crt'
-    public_crt = 'client/certs/Anjo_Laptop.cert.pem'
-    private_key = 'client/certs/Anjo_Laptop.private.key'
+    public_crt = 'client/certs/certificate.pem'
+    private_key = 'client/certs/private.key'
     client.tls_set( root_ca,
                     certfile = public_crt,
                     keyfile = private_key,
