@@ -56,3 +56,23 @@ resource "aws_iot_thing_principal_attachment" "my_principal_attachment" {
   principal = aws_iot_certificate.my_certificate.arn
 }
 
+locals {
+  certificate_path       = "../client/certs/certificate.pem"
+  private_key_path       = "../client/certs/private.key"
+  root_ca_certificate_path = "../client/certs/root-CA.crt"
+}
+
+resource "local_file" "certificate" {
+  content  = aws_iot_certificate.my_certificate.certificate_pem
+  filename = local.certificate_path
+}
+
+resource "local_file" "private_key" {
+  content  = tls_private_key.my_private_key.private_key_pem
+  filename = local.private_key_path
+}
+
+resource "local_file" "root_ca_certificate" {
+  content  = tls_self_signed_cert.self_signed.cert_pem
+  filename = local.root_ca_certificate_path
+}

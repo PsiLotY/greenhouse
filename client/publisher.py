@@ -1,12 +1,12 @@
 from time import sleep
 import json
-import config
-from iotee import Iotee
 import signal
 import sys
 import time
-from utils import connect_to_mqtt, subscribe_to, start_iotee
+from utils import connect_to_mqtt, start_iotee
 import ssl
+
+COM_PORT = "COM3"
 
 def signal_handler(signal: int, frame: object, iotee: object):
     '''Handler function that stops the iotee thread on ctrl+c
@@ -178,7 +178,7 @@ def main(button_mode):
         None
     '''
     global ran
-    iotee = start_iotee(config.COM_port) # manually change the COM Port if you have multiple devices
+    iotee = start_iotee(COM_PORT) # manually change the COM Port if you have multiple devices
     signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
     iotee.on_temperature = on_temperature

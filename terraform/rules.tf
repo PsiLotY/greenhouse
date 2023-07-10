@@ -40,7 +40,3 @@ resource "aws_iot_topic_rule" "timestream_routing" {
     role_arn = aws_iam_role.core_role.arn
   }
 }
-
-
-
-

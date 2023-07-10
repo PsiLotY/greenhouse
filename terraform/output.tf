@@ -7,7 +7,10 @@ output "key" {
   sensitive = true
 }
 
-#gpt
 output "thing_arn" {
   value = aws_iot_thing.my_thing.arn
+}
+
+output "iot_core_endpoint" {
+  value = data.aws_iot_endpoint.current.endpoint_address
 }
