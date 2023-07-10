@@ -1,7 +1,12 @@
 import paho.mqtt.client as mqtt
 import ssl
 from iotee import Iotee
-import json
+
+#the try is needed to have both the scripts and tests working
+try:
+    import config
+except ModuleNotFoundError:
+    from client import config
 
 def connect_to_mqtt():
     '''Connects to a mqtt broker with tls encryption 

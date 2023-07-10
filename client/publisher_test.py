@@ -1,6 +1,11 @@
 import unittest
 from unittest.mock import MagicMock, patch
-import publisher
+
+#the try is needed to have the tests work locally and in the pipeline
+try:
+    import publisher
+except ModuleNotFoundError:
+    from client import publisher
 
 
 class PublisherTest(unittest.TestCase):

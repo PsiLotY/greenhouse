@@ -1,7 +1,13 @@
 import json
 import unittest
 from unittest.mock import Mock, patch
-from receiver import on_message
+
+
+#the try is needed to have the tests work locally and in the pipeline
+try:
+    from client import receiver
+except ModuleNotFoundError:
+    import receiver
 
 
 class TestOnMessage(unittest.TestCase):
@@ -14,8 +20,8 @@ class TestOnMessage(unittest.TestCase):
     def message_test_helper(self, state, led_args):
         self.msg_mock.payload = json.dumps({"state": state}).encode()
 
-        with patch("receiver.display_text") as display_text_mock:
-            on_message(
+        with patch("client.receiver.display_text") as display_text_mock:
+            receiver.on_message(
                 self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
             )
 

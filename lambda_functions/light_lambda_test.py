@@ -1,8 +1,12 @@
 import json
 import unittest
 from unittest.mock import patch
-import light_lambda
 
+#the try is needed to have both the scripts and tests working
+try:
+    import light_lambda
+except ModuleNotFoundError:
+    from lambda_functions import light_lambda
 
 class TestLambdaFunctions(unittest.TestCase):
     def setUp(self):

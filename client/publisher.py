@@ -5,6 +5,18 @@ import sys
 import time
 from utils import connect_to_mqtt, start_iotee
 import ssl
+import time
+
+#the try is needed to have both the scripts and tests working
+try:
+    import config
+except ModuleNotFoundError:
+    from client import config
+    
+try:
+    from utils import connect_to_mqtt, start_iotee
+except ModuleNotFoundError:
+    from client.utils import connect_to_mqtt, start_iotee
 
 COM_PORT = "COM3"
 
@@ -58,13 +70,13 @@ def on_publish(client: object, userdata: any, mid: int):
 
 # message template
 data = {
-    "timestamp": 0,
+    "timestamp": 0.0,
     "inputName": "sensorData",
-    "pressure": 0,
-    "temperature": 0,
-    "humidity": 0,
-    "light": 0,
-    "proximity": 0
+    "pressure": 0.0,
+    "temperature": 0.0,
+    "humidity": 0.0,
+    "light": 0.0,
+    "proximity": 0.0
 }
 
 
@@ -132,13 +144,13 @@ def on_button_pressed(button):
     '''
     global ran
     if button == 'A':
-        data['temperature'] = 30  # >25
+        data['temperature'] = 30.0  # >25
     elif button == 'B':
-        data['temperature'] = 20  # <=25
+        data['temperature'] = 20.0  # <=25
     elif button == 'X':
-        data['humidity'] = 10  # < 20
+        data['humidity'] = 10.0  # < 20
     elif button == 'Y':
-        data['humidity'] = 30  # >= 20
+        data['humidity'] = 30.0  # >= 20
     print(f'Button press data for Button {button}: {data}' )
     ran = True
 
