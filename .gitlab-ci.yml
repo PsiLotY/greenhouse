@@ -1,4 +1,4 @@
-build:
+python:build:
   stage: build
   image: python:3.11
   artifacts:
@@ -7,7 +7,7 @@ build:
   script:
     - pip install -r client/requirements.txt
 
-test:
+python:test:
   image: python:3.11
   stage: test
   script:
