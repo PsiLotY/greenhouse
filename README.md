@@ -31,3 +31,6 @@ python ./client/publisher.py
 ```
 The `publisher.py` file will read the sensors of a device and sends the data to the cloud. To debug you can enable the `button_mode` by to pressing the buttons. Now predefined test data instead of sensor data will be sent to the cloud.
 The `receiver.py` code uses the data it receives to trigger various actions on a device.
+
+## Additional Notes
+The project presentations files, which include the architecture diagram and data-flow diagram can be found in the GitLab Wiki.
