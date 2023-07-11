@@ -29,7 +29,7 @@ Now when you run
 python ./client/receiver.py
 python ./client/publisher.py
 ```
-The `publisher.py` file will read the sensors of a device and sends the data to the cloud. To debug you can enable the `button_mode` by to pressing the buttons. Now predefined test data instead of sensor data will be sent to the cloud.
+The `publisher.py` file will read the sensors of a device and sends the data to the cloud. To enter the debug mode you can change the `button_mode` value to True. Now it is possible to send predefined test data instead of sensor data by pressing the iotee buttons to the cloud.
 The `receiver.py` code uses the data it receives to trigger various actions on a device.
 
 ## Additional Notes

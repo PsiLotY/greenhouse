@@ -13,6 +13,7 @@ try:
 except ModuleNotFoundError:
     from client.utils import connect_to_mqtt, start_iotee
 
+button_mode = False
 COM_PORT = "COM3"
 
 def signal_handler(signal: int, frame: object, iotee: object):
@@ -172,7 +173,6 @@ def request_sensor_data(iotee):
 
 
 ran = False
-button_mode = False
 # main loop for sending data
 def main(button_mode):
     '''Main loop that starts the iotee thread, connects to the mqtt broker and sends data on a specific topic
@@ -220,4 +220,4 @@ def main(button_mode):
 
 if __name__ == '__main__':
     '''Starts the main loop'''
-    main(button_mode=True)
+    main(button_mode=button_mode)
