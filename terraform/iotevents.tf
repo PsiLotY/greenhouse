@@ -2,7 +2,7 @@ resource "awscc_iotevents_input" "window_input" {
   input_definition = {
     attributes = [{
       json_path = "temperature"
-      }]
+    }]
   }
   input_name = "window_input"
 }
@@ -11,9 +11,9 @@ resource "awscc_iotevents_input" "light_input" {
   input_definition = {
     attributes = [{
       json_path = "need_light"
-    },
-    {
-      json_path = "light"
+      },
+      {
+        json_path = "light"
     }]
   }
   input_name = "light_input"
@@ -23,7 +23,7 @@ resource "awscc_iotevents_input" "sprinkler_input" {
   input_definition = {
     attributes = [{
       json_path = "humidity"
-      }]
+    }]
   }
   input_name = "sprinkler_input"
 }
