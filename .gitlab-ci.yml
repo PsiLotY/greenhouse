@@ -14,5 +14,22 @@ python:test:
 include:
   - template: Terraform.gitlab-ci.yml
 
+build:
+  artifacts:
+    when: on_success
+    expire_in: 10 days
+    paths:
+      - "lambda_functions/*.zip"
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+
+deploy:
+  artifacts:
+    when: on_success
+    expire_in: 10 days
+    paths:
+      - "client/certs/*"
+
 variables:
   TF_ROOT: "$CI_PROJECT_DIR/terraform"
