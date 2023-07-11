@@ -1,58 +1,31 @@
-resource "awscc_iotevents_input" "device_input" {
+resource "awscc_iotevents_input" "window_input" {
   input_definition = {
     attributes = [{
-      json_path = "message_id"
-      }, {
-      json_path = "timestamp"
-      }, {
-      json_path = "humidity"
-      }, {
       json_path = "temperature"
-      }, {
-      json_path = "light"
-      }, {
-      json_path = "need_light"
-    }]
+      }]
   }
-  input_name = "device_input"
+  input_name = "window_input"
 }
 
-resource "awscc_iotevents_input" "device_input2" {
+resource "awscc_iotevents_input" "light_input" {
   input_definition = {
     attributes = [{
-      json_path = "message_id"
-      }, {
-      json_path = "timestamp"
-      }, {
-      json_path = "humidity"
-      }, {
-      json_path = "temperature"
-      }, {
-      json_path = "light"
-      }, {
       json_path = "need_light"
+    },
+    {
+      json_path = "light"
     }]
   }
-  input_name = "device_input2"
+  input_name = "light_input"
 }
 
-resource "awscc_iotevents_input" "device_input3" {
+resource "awscc_iotevents_input" "sprinkler_input" {
   input_definition = {
     attributes = [{
-      json_path = "message_id"
-      }, {
-      json_path = "timestamp"
-      }, {
       json_path = "humidity"
-      }, {
-      json_path = "temperature"
-      }, {
-      json_path = "light"
-      }, {
-      json_path = "need_light"
-    }]
+      }]
   }
-  input_name = "device_input3"
+  input_name = "sprinkler_input"
 }
 
 resource "awscc_iotevents_detector_model" "window" {
@@ -70,7 +43,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "open_windows"
-              condition  = "$input.device_input2.temperature > 25"
+              condition  = "$input.window_input.temperature > 25"
               actions    = []
               next_state = "windows_open"
             }
@@ -104,7 +77,7 @@ resource "awscc_iotevents_detector_model" "window" {
           transition_events = [
             {
               event_name = "close_windows"
-              condition  = "$input.device_input2.temperature <= 25"
+              condition  = "$input.window_input.temperature <= 25"
               actions    = []
               next_state = "windows_closed"
             }
@@ -153,7 +126,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
           transition_events = [
             {
               event_name = "start_sprinklers"
-              condition  = "$input.device_input.humidity < 20"
+              condition  = "$input.sprinkler_input.humidity < 20"
               actions    = []
               next_state = "sprinklers_on"
             }
@@ -187,7 +160,7 @@ resource "awscc_iotevents_detector_model" "sprinkler" {
           transition_events = [
             {
               event_name = "stop_sprinklers"
-              condition  = "$input.device_input.humidity >= 20"
+              condition  = "$input.sprinkler_input.humidity >= 20"
               actions    = []
               next_state = "sprinklers_off"
             }
@@ -233,7 +206,7 @@ resource "awscc_iotevents_detector_model" "light" {
           events = [
             {
               event_name = "input_light_off_state",
-              condition  = "$input.device_input3.light < 60",
+              condition  = "$input.light_input.light < 60",
               actions = [
                 {
                   lambda = {
@@ -246,7 +219,7 @@ resource "awscc_iotevents_detector_model" "light" {
           transition_events = [
             {
               event_name = "turn_on",
-              condition  = "$input.device_input3.need_need_light == true",
+              condition  = "$input.light_input.need_need_light == true",
               actions    = [],
               next_state = "lights_on"
             }
@@ -281,7 +254,7 @@ resource "awscc_iotevents_detector_model" "light" {
           events = [
             {
               event_name = "input_light_on_state",
-              condition  = "$input.device_input3.light < 60",
+              condition  = "$input.light_input.light < 60",
               actions = [
                 {
                   lambda = {
@@ -294,7 +267,7 @@ resource "awscc_iotevents_detector_model" "light" {
           transition_events = [
             {
               event_name = "turn_off",
-              condition  = "$input.device_input3.need_need_light == false",
+              condition  = "$input.light_input.need_need_light == false",
               actions    = [],
               next_state = "lights_off"
             }

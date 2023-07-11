@@ -21,6 +21,7 @@ def connect_to_mqtt():
     # get endpoint from terraform state file
     with open('./terraform/terraform.tfstate', 'r') as state_file:
         state_data = json.load(state_file)
+    print(state_data['outputs']['iot_core_endpoint']['value'])
     mqtt_url = state_data['outputs']['iot_core_endpoint']['value']
     client = mqtt.Client()
     set_tls(client)
