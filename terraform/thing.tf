@@ -33,8 +33,8 @@ resource "tls_private_key" "my_private_key" {
 
 
 locals {
-  certificate_path       = "../client/certs/certificate.pem"
-  private_key_path       = "../client/certs/private.key"
+  certificate_path         = "../client/certs/certificate.pem"
+  private_key_path         = "../client/certs/private.key"
   root_ca_certificate_path = "../client/certs/root-CA.crt"
 }
 
@@ -44,15 +44,15 @@ data "http" "ca_pem" {
 }
 
 resource "local_file" "root_ca_certificate" {
-  content = data.http.ca_pem.body
+  content  = data.http.ca_pem.body
   filename = local.root_ca_certificate_path
 }
 
 
 
 resource "aws_iot_certificate" "my_certificate" {
-  active          = true
-  csr = tls_cert_request.cert_request.cert_request_pem
+  active = true
+  csr    = tls_cert_request.cert_request.cert_request_pem
 }
 
 resource "aws_iot_policy_attachment" "my_policy_attachment" {
