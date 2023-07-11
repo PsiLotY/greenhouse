@@ -1,9 +1,6 @@
 python:build:
   stage: build
   image: python:3.11
-  artifacts:
-    paths:
-      - ${TF_ROOT}/plan.cache
   script:
     - pip install -r client/requirements.txt
 
@@ -18,4 +15,4 @@ include:
   - template: Terraform.gitlab-ci.yml
 
 variables:
-  TF_ROOT: "./terraform"
+  TF_ROOT: "$CI_PROJECT_DIR/terraform"

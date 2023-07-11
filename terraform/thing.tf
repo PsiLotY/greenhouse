@@ -44,7 +44,7 @@ data "http" "ca_pem" {
 }
 
 resource "local_file" "root_ca_certificate" {
-  content  = data.http.ca_pem.body
+  content  = data.http.ca_pem.response_body
   filename = local.root_ca_certificate_path
 }
 
