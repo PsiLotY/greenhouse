@@ -19,7 +19,7 @@ build:
     when: on_success
     expire_in: 10 days
     paths:
-      - "lambda_functions/*.zip"
+      - "$CI_PROJECT_DIR/lambda_functions/*.zip"
       - ${TF_ROOT}/plan.cache
     reports:
       terraform: ${TF_ROOT}/plan.json
@@ -29,7 +29,7 @@ deploy:
     when: on_success
     expire_in: 10 days
     paths:
-      - "client/certs/*"
+      - "$CI_PROJECT_DIR/client/certs/*"
 
 variables:
   TF_ROOT: "$CI_PROJECT_DIR/terraform"
