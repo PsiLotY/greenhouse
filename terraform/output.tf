@@ -1,5 +1,5 @@
 output "cert" {
-  value = tls_self_signed_cert.self_signed.cert_pem
+  value = tls_cert_request.cert_request.cert_request_pem
 }
 
 output "key" {
