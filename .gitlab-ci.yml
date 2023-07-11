@@ -15,4 +15,4 @@ include:
   - template: Terraform.gitlab-ci.yml
 
 variables:
-  TF_ROOT: "terraform"
+  TF_ROOT: "$CI_PROJECT_DIR/terraform"
