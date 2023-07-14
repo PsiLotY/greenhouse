@@ -5,15 +5,15 @@ resource "aws_iot_topic_rule" "iot_rule" {
   sql_version = "2016-03-23"
   sql         = "SELECT * FROM 'iot/sensor_data'"
   iot_events {
-    input_name = "device_input"
+    input_name = "window_input"
     role_arn   = aws_iam_role.core_role.arn
   }
   iot_events {
-    input_name = "device_input2"
+    input_name = "light_input"
     role_arn   = aws_iam_role.core_role.arn
   }
   iot_events {
-    input_name = "device_input3"
+    input_name = "sprinkler_input"
     role_arn   = aws_iam_role.core_role.arn
   }
   error_action {
