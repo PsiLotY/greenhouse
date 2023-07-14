@@ -1,6 +1,7 @@
 import unittest
 import boto3
 import dateutil
+from unittest.mock import patch
 
 from unittest.mock import MagicMock
 from temperature_lambda import (
@@ -88,7 +89,46 @@ class TestMyModule(unittest.TestCase):
 
         # Assertions
         self.assertFalse(result)
+""" 
+    @patch("temperature_handler.query_database")
+    @patch("temperature_handler.get_device_ids")
+    @patch("temperature_handler.format_temperature_data")
+    @patch("temperature_handler.all_present_and_hot")
+    @patch("temperature_handler.client.publish")
+    def test_temperature_handler(self, mock_publish, mock_all_present_and_hot, mock_format_temperature_data, mock_get_device_ids, mock_query_database):
+        # Mock the necessary dependencies and responses
+        event = {"example_key": "example_value"}
+        context = {}  # Provide an empty context or add relevant information if required
+        device_query = "device_query"
+        temperature_query = "temperature_query"
+        device_response = "device_response"
+        temperature_response = "temperature_response"
+        temperature_data = "temperature_data"
+        device_ids = ["device1", "device2"]
 
+        mock_query_database.side_effect = [device_response, temperature_response]
+        mock_get_device_ids.return_value = device_ids
+        mock_format_temperature_data.return_value = temperature_data
+        mock_all_present_and_hot.return_value = True
+        mock_publish.return_value = {}
 
+        # Call the function
+        response = temperature_handler(event, context)
+
+        # Assertions
+        self.assertEqual(response, "opening windows")
+        mock_query_database.assert_has_calls([
+            unittest.mock.call(device_query),
+            unittest.mock.call(temperature_query)
+        ])
+        mock_get_device_ids.assert_called_once_with(device_response)
+        mock_format_temperature_data.assert_called_once_with(temperature_response)
+        mock_all_present_and_hot.assert_called_once_with(temperature_data, device_ids)
+        mock_publish.assert_called_once_with(
+            topic='iot/sensor_data',
+            qos=1,
+            payload='{"open_windows": true}'
+        )
+ """
 if __name__ == '__main__':
     unittest.main()
