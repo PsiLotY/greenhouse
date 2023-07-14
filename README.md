@@ -64,13 +64,16 @@ The project presentations files, which include the architecture diagram and data
 # Code Guidelines
 
 ## Python	
-- Variables and Functions: Use lower_case_with_underscores format.
-- Comments: Use inline comments when needed
-- Docstrings: Always use docstrings to describe the purpose of each function
+- Variables and Functions should use snake_case format.
+- Use inline comments when needed
+- Always use docstrings to describe the purpose of each function
 
 ## Terraform
 - Use `Terraform fmt` to format your code
 - Use `Terraform validate` to validate your code
+- Variables should use the snake_case format
+- Add all required providers in the main.tf
+- Each .tf file should be as small as possible and contain related resources, grouped logically
 
 # Contributors
 - Anjo Weddewer (aw181, 41486)
