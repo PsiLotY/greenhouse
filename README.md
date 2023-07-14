@@ -4,6 +4,20 @@ This is a proof of concept for an IoT-based greenhouse management system using c
 
 The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud platform, where it is monitored and processed.
 
+## Table of Contents
+- [Greenhouse](#greenhouse)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+    - [Device Code Setup](#device-code-setup)
+    - [Terraform Setup](#terraform-setup)
+    - [Terraform State Management with GitLab](#terraform-state-management-with-gitlab)
+  - [Run](#run)
+  - [Additional Notes](#additional-notes)
+- [Code Guidelines](#code-guidelines)
+  - [Python](#python)
+  - [Terraform](#terraform)
+- [Contributors](#contributors)
+
 ## Setup
 First, the project is using the Pico Enviro+ module with the software from the following [link](https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages).
 To install the firmware, you need to connect your device to your pc while holding down the reset button on the back of case. This will open the file explorer. Now you can upload the firmware (.uf2 file) to the module.
@@ -20,7 +34,7 @@ aws_secret_key = ""
 and populate the fields with the access and secret key of your AWS account.
 Alternatively you can enter your keys in the terminal when running terraform apply.
 
-# Terraform State Management with GitLab
+### Terraform State Management with GitLab
 We utilize GitLab's Terraform state backend to manage and store the state of our infrastructure. Follow the instuctions that can be read [here](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html) To use the GitLab Terraform state backend, it requires the use of a GitLab Personal Access Token. 
 
 You can create a token by following the instructions [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token). The token needs to have the `api` scope.
@@ -45,7 +59,18 @@ The `publisher.py` file will read the sensors of a device and sends the data to 
 The `receiver.py` code uses the data it receives to trigger various actions on a device.
 
 ## Additional Notes
-The project presentations files, which include the architecture diagram and data-flow diagram can be found in the GitLab Wiki.
+The project presentations files, which include the architecture diagram and data-flow diagram can be found in the [GitLab Wiki](https://gitlab.mi.hdm-stuttgart.de/csiot/ss23/greenhouse/-/wikis/home).
+
+# Code Guidelines
+
+## Python	
+- Variables and Functions: Use lower_case_with_underscores format.
+- Comments: Use inline comments when needed
+- Docstrings: Always use docstrings to describe the purpose of each function
+
+## Terraform
+- Use `Terraform fmt` to format your code
+- Use `Terraform validate` to validate your code
 
 # Contributors
 - Anjo Weddewer (aw181, 41486)
