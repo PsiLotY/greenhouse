@@ -32,6 +32,15 @@ provider "awscc" {
 }
 
 
+locals {
+  endpoint_path = "../client/certs/endpoint.txt"
+}
+
 data "aws_iot_endpoint" "current" {
   endpoint_type = "iot:Data-ATS"
+}
+
+resource "local_file" "endpoint" {
+  content  = data.aws_iot_endpoint.current.endpoint_address
+  filename = local.endpoint_path
 }

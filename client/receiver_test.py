@@ -20,10 +20,16 @@ class TestOnMessage(unittest.TestCase):
     def message_test_helper(self, state, led_args):
         self.msg_mock.payload = json.dumps({"state": state}).encode()
 
-        with patch("client.receiver.display_text") as display_text_mock:
-            receiver.on_message(
-                self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
-            )
+        try:
+            with patch("client.receiver.display_text") as display_text_mock:
+                receiver.on_message(
+                    self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
+                )
+        except:
+            with patch("receiver.display_text") as display_text_mock:
+                receiver.on_message(
+                    self.iotee_mock, self.client_mock, self.userdata_mock, self.msg_mock
+                )
 
         self.iotee_mock.set_led.assert_called_with(*led_args)
         display_text_mock.assert_called()
