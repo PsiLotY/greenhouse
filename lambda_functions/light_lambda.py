@@ -76,23 +76,23 @@ def evaluate_if_light(total_sunlight_duration: int, message: dict):
         text (str): a string containing the message to be sent to the iotee device
     '''
     if total_sunlight_duration > 28800:
-        message["need_light"] = False
+        data = {"need_light": False}
         response = client.publish(
             topic='iot/sensor_data',
             qos=1,
-            payload=json.dumps(message)
+            payload=json.dumps(data)
         )
         return "doesn't need light"
     else:
-        message["need_light"] = True
+        data = {"need_light": True}
         response = client.publish(
             topic='iot/sensor_data',
             qos=1,
-            payload=json.dumps(message)
+            payload=json.dumps(data)
         )
         return 'needs light'
 
-def lambda_handler(event, context):
+def light_handler(event, context):
     '''
     Parameters:
         event (dict): a dictionary containing the message from the iotee device

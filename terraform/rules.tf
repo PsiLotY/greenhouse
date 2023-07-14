@@ -1,6 +1,6 @@
 resource "aws_iot_topic_rule" "iot_rule" {
   name        = "iot_rule"
-  description = "Testing whether the rule works with iotevents, created with terraform"
+  description = "rule to route all data on sensor_data to detector models, created with terraform"
   enabled     = true
   sql_version = "2016-03-23"
   sql         = "SELECT * FROM 'iot/sensor_data'"
@@ -34,7 +34,7 @@ resource "aws_iot_topic_rule" "timestream_routing" {
     database_name = "sensor_data_db"
     table_name    = "sensor_data_table"
     dimension {
-      name  = "deviceId"
+      name  = "device_id"
       value = uuid()
     }
     role_arn = aws_iam_role.core_role.arn
