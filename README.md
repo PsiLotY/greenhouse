@@ -19,14 +19,14 @@ The project utilizes IoT sensors to gather real-time data parameters such as tem
 - [Contributors](#contributors)
 
 ## Setup
-First, the project is using the Pico Enviro+ module with the software from the following [link](https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages).
-To install the firmware, you need to connect your device to your pc while holding down the reset button on the back of case. This will open the file explorer. Now you can upload the firmware (.uf2 file) to the module.
+First, the project is using the Pico Enviro+ module with the firmware from the following [link](https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages).
+To install the firmware, you need to connect your device to your pc while holding down the reset button on the back of the case. This will open the file explorer. Now you can upload the firmware (.uf2 file) to the module.
 
 ### Device Code Setup
-To add the python packages for the project you can run `pip install -r ./client/requirements.txt`.
+To add the python packages for the project you can run `pip install -r ./client/requirements.txt`. 
 
 ### Terraform Setup
-Create a terraform.tfvars file in the terraform directory and insert the following code:
+Create a `terraform.tfvars` file in the terraform directory and insert the following code:
 ```terraform    
 aws_access_key = ""
 aws_secret_key = ""
@@ -35,7 +35,7 @@ and populate the fields with the access and secret key of your AWS account.
 Alternatively you can enter your keys in the terminal when running terraform apply.
 
 ### Terraform State Management with GitLab
-We utilize GitLab's Terraform state backend to manage and store the state of our infrastructure. Follow the instuctions that can be read [here](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html) To use the GitLab Terraform state backend, it requires the use of a GitLab Personal Access Token. 
+We utilize GitLab's Terraform state backend to manage and store the state of our infrastructure. Follow the instructions that can be read [here](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html). To use the GitLab Terraform state backend, it requires the use of a GitLab Personal Access Token. 
 
 You can create a token by following the instructions [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token). The token needs to have the `api` scope.
 
@@ -55,8 +55,12 @@ python ./client/receiver.py
 python ./client/publisher.py
 ```
 
-The `publisher.py` file will read the sensors of a device and sends the data to the cloud. To enter the debug mode you can change the `button_mode` value to True. Now it is possible to send predefined test data instead of sensor data by pressing the iotee buttons to the cloud.
+The `publisher.py` file will read the sensors of a device and sends the data to the cloud. <br>
+If there is the need to send prepared data you may use the `BUTTON_MODE`. This disables the automated sending of data and sends data via press of the different buttons. 
+
 The `receiver.py` code uses the data it receives to trigger various actions on a device.
+
+To setup multiple different devices, change the value for `DEVICE_ID` to different values from the other connected publishing devices. If you want to achiev this on a single PC simply run the first publisher. Then change the values and start it again in a different terminal. (The temperature detector model is able to use this functionality)
 
 ## Additional Notes
 The project presentations files, which include the architecture diagram and data-flow diagram can be found in the [GitLab Wiki](https://gitlab.mi.hdm-stuttgart.de/csiot/ss23/greenhouse/-/wikis/home).
