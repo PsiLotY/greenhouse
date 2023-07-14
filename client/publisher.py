@@ -14,7 +14,7 @@ except ModuleNotFoundError:
     from client.utils import connect_to_mqtt, start_iotee
 
 button_mode = False
-COM_PORT = "COM3"
+COM_PORT = "COM9"
 
 def signal_handler(signal: int, frame: object, iotee: object):
     '''Handler function that stops the iotee thread on ctrl+c
