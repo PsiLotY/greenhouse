@@ -6,17 +6,7 @@ from dateutil import tz
 client = boto3.client('iot-data', region_name='eu-central-1')
 timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
 
-def get_light_data():
-    '''Sends a query to the timestream database gathering all light data from today which value is above 60 and the time
-    from the next row
-    
-    Parameters: 
-        None
-    
-    Returns:
-        response (dict): a dictionary containing the response from the timestream query
-    '''
-    query = """
+light_query = """
         WITH light_above_threshold AS (
             SELECT time, measure_value::double
             FROM sensor_data_db.sensor_data_table
@@ -34,6 +24,15 @@ def get_light_data():
         WHERE measure_value::double > 60
     """
 
+def query_database(query: str):
+    '''Sends a query to the timestream database
+    
+    Parameters: 
+        query (str): a string containing the query to be sent to the timestream database
+    
+    Returns:
+        response (dict): a dictionary containing the response from the timestream query
+    '''
     response = timestream_client.query(QueryString=query)
     return response
 
@@ -115,7 +114,7 @@ def light_handler(event, context):
     # the detector model only runs this lambda if current light < 60. 
     # thus no checks for that are needed
     if current_time > target_time:
-        response = get_light_data()
+        response = query_database(light_query)
         total_sunlight_duration = get_sunlight_duration(response)
         evaluate_if_light(total_sunlight_duration, message)
         return "after 6"
