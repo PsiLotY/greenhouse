@@ -1,5 +1,9 @@
 # Greenhouse
 
+This is a proof of concept for an IoT-based greenhouse management system using cloud services technologies.
+
+The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud platform, where it is monitored, processed and analyzed.
+
 ## Setup
 First, the project is using the Pico Enviro+ module with the software from the following [link](https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages).
 To install the firmware, you need to connect your device to your pc while holding down the reset button on the back of case. This will open the file explorer. Now you can upload the firmware (.uf2 file) to the module.
