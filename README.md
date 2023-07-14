@@ -46,3 +46,11 @@ The `receiver.py` code uses the data it receives to trigger various actions on a
 
 ## Additional Notes
 The project presentations files, which include the architecture diagram and data-flow diagram can be found in the GitLab Wiki.
+
+# Contributors
+- Anjo Weddewer (aw181, 41486)
+- Antti Kuivaleinen (ak366, 5010497)
+- Elisa Zhang (ez018, 40972)
+- Firaz Ilhan (fi007, 40032)
+- Isaac Morales (im050, 44904)
+- Johannes Rödel (jr125, 41959)
