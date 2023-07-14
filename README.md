@@ -2,7 +2,21 @@
 
 This is a proof of concept for an IoT-based greenhouse management system using cloud services technologies.
 
-The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud platform, where it is monitored, processed and analyzed.
+The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud platform, where it is monitored and processed.
+
+## Table of Contents
+- [Greenhouse](#greenhouse)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+    - [Device Code Setup](#device-code-setup)
+    - [Terraform Setup](#terraform-setup)
+    - [Terraform State Management with GitLab](#terraform-state-management-with-gitlab)
+  - [Run](#run)
+  - [Additional Notes](#additional-notes)
+- [Code Guidelines](#code-guidelines)
+  - [Python](#python)
+  - [Terraform](#terraform)
+- [Contributors](#contributors)
 
 ## Setup
 First, the project is using the Pico Enviro+ module with the software from the following [link](https://gitlab.mi.hdm-stuttgart.de/iotee/firmware/-/packages).
@@ -20,6 +34,13 @@ aws_secret_key = ""
 and populate the fields with the access and secret key of your AWS account.
 Alternatively you can enter your keys in the terminal when running terraform apply.
 
+### Terraform State Management with GitLab
+We utilize GitLab's Terraform state backend to manage and store the state of our infrastructure. Follow the instuctions that can be read [here](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html) To use the GitLab Terraform state backend, it requires the use of a GitLab Personal Access Token. 
+
+You can create a token by following the instructions [here](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token). The token needs to have the `api` scope.
+
+Once you have your Personal Access Token, you're ready to initialize your Terraform configuration with the GitLab backend. You can find and copy the init command from the GitLab repository Terraform state page under Infrastructure > Terraform states.
+
 ## Run
 To set up the AWS cloud infrastructure you can run 
 ```bash
@@ -33,8 +54,31 @@ Now when you run
 python ./client/receiver.py
 python ./client/publisher.py
 ```
+
 The `publisher.py` file will read the sensors of a device and sends the data to the cloud. To enter the debug mode you can change the `button_mode` value to True. Now it is possible to send predefined test data instead of sensor data by pressing the iotee buttons to the cloud.
 The `receiver.py` code uses the data it receives to trigger various actions on a device.
 
 ## Additional Notes
-The project presentations files, which include the architecture diagram and data-flow diagram can be found in the GitLab Wiki.
+The project presentations files, which include the architecture diagram and data-flow diagram can be found in the [GitLab Wiki](https://gitlab.mi.hdm-stuttgart.de/csiot/ss23/greenhouse/-/wikis/home).
+
+# Code Guidelines
+
+## Python	
+- Variables and Functions should use snake_case format.
+- Use inline comments when needed
+- Always use docstrings to describe the purpose of each function
+
+## Terraform
+- Use `Terraform fmt` to format your code
+- Use `Terraform validate` to validate your code
+- Variables should use the snake_case format
+- Add all required providers in the main.tf
+- Each .tf file should be as small as possible and contain related resources, grouped logically
+
+# Contributors
+- Anjo Weddewer (aw181, 41486)
+- Antti Kuivaleinen (ak366, 5010497)
+- Elisa Zhang (ez018, 40972)
+- Firaz Ilhan (fi007, 40032)
+- Isaac Morales (im050, 44904)
+- Johannes Rödel (jr125, 41959)

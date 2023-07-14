@@ -13,8 +13,10 @@ try:
 except ModuleNotFoundError:
     from client.utils import connect_to_mqtt, start_iotee
 
-button_mode = False
-COM_PORT = "COM3"
+#define your device as you wish, you may enable `BUTTON_MODE` to debug your code
+BUTTON_MODE = True
+COM_PORT = "COM7"
+DEVICE_ID = "002"
 
 def signal_handler(signal: int, frame: object, iotee: object):
     '''Handler function that stops the iotee thread on ctrl+c
@@ -66,6 +68,7 @@ def on_publish(client: object, userdata: any, mid: int):
 
 # message template
 data = {
+    "device_id" : DEVICE_ID,
     "timestamp": 0.0,
     "inputName": "sensorData",
     "pressure": 0.0,
@@ -220,4 +223,4 @@ def main(button_mode):
 
 if __name__ == '__main__':
     '''Starts the main loop'''
-    main(button_mode=button_mode)
+    main(button_mode=BUTTON_MODE)

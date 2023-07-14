@@ -1,83 +1,167 @@
 from time import sleep
 import json
-import config
-from iotee import Iotee
 import signal
 import sys
 import time
-from utils import connect_to_mqtt, subscribe_to, start_iotee
+from utils import connect_to_mqtt, start_iotee
 import ssl
+import time
 
-# handles shutting down threads on ctrl+c
-def signal_handler(signal, frame, iotee):
+#the try is needed to have both the scripts and tests working
+try:
+    from utils import connect_to_mqtt, start_iotee
+except ModuleNotFoundError:
+    from client.utils import connect_to_mqtt, start_iotee
+
+button_mode = False
+COM_PORT = "/dev/ttyACM0"
+
+def signal_handler(signal: int, frame: object, iotee: object):
+    '''Handler function that stops the iotee thread on ctrl+c
+    
+    Parameters:
+        signal (int): signal number
+        frame (frame): current stack frame
+        iothee (Iotee): iotee object
+        
+    Returns:
+        None
+    '''
     print('Shutting down')
     iotee.stop()
     sys.exit(0)
 
+# callback functions for mqtt
+def on_connect(client: object, userdata: any, flags: dict, response_code: int):
+    '''Callback function on connectingto a broker, prints if connection was successful
+    
+    Parameters:
+        client (Client): mqtt client object
+        userdata (Any): userdata
+        flags (dict): flags
+        response_code (int): response code
+        
+    Returns:
+        None
+    '''
+    if response_code == 0:
+        print('Connected with status: {0}'.format(response_code))
+    else:
+        print('Connection failed with status: {0}'.format(response_code))
 
-# define callback functions for mqtt
-
-
-def on_connect(client, userdata, flags, response_code):
-    print('Connected with status: {0}'.format(response_code))
-
-
-def on_publish(client, userdata, mid):
+def on_publish(client: object, userdata: any, mid: int):
+    '''Callback function on publishing a message, 
+    prints the message id
+    
+    Parameters:
+        client (Client): mqtt client object
+        userdata (Any): userdata
+        mid (int): message id
+        
+    Returns:
+        None
+    '''
     print('message number:', mid)
 
 
 # message template
-message = {
-    'timestamp': 0,
-    'inputName': 'sensorData',
-    'messageId': '555e8fef-6c80-48f3-a6b5-2d2160d472f5',
-    'pressure': 0,
-    'temperature': 0,
-    'humidity': 0,
-    'light': 0,
-    'proximity': 0,
+data = {
+    "timestamp": 0.0,
+    "inputName": "sensorData",
+    "pressure": 0.0,
+    "temperature": 0.0,
+    "humidity": 0.0,
+    "light": 0.0,
+    "proximity": 0.0
 }
-data = message
 
 
 # callback functions for iotee
 def on_temperature(value):
+    '''Callback function on receiving a temperature value, 
+    reads the value and stores it in a global dictionary called data
+    
+    Parameters:
+        value (float): temperature value
+        
+    Returns:
+        None
+    '''
     data['temperature'] = value
     print('temperature: {:.2f}'.format(value))
 
-
 def on_humidity(value):
+    '''Callback function on receiving a humidity value, 
+    reads the value and stores it in a global dictionary called data
+    
+    Parameters:
+        value (float): humidity value
+        
+    Returns:
+        None
+    '''
     data['humidity'] = value
     print('humidity: {:.2f}'.format(value))
 
-
 def on_light(value):
+    '''Callback function on receiving a light value, 
+    reads the value and stores it in a global dictionary called data
+    
+    Parameters:
+        value (float): light value
+        
+    Returns:
+        None
+    '''
     data['light'] = value
     print('light: {:.2f}'.format(value))
 
-
 def on_proximity(value):
+    '''Callback function on receiving a proximity value, 
+    reads the value and stores it in a global dictionary called data
+    
+    Parameters:
+        value (float): proximity value
+        
+    Returns:
+        None
+    '''
     data['proximity'] = value
     print('proximity: {:.2f}'.format(value))
 
-
-def on_button_pressed(value):
+def on_button_pressed(button):
+    '''
+    
+    Parameters:
+        button (str): button on the iotee device that was pressed. Can be 'A', 'B', 'X', 'Y'
+        
+    Returns:
+        None
+    '''
     global ran
-    print('button pressed:', value)
-    if value == 'A':
-        data['temperature'] = 30  # >25
-    elif value == 'B':
-        data['temperature'] = 20  # <=25
-    elif value == 'X':
-        data['humidity'] = 10  # < 20
-    elif value == 'Y':
-        data['humidity'] = 30  # >= 20
-    print('Button press data:', data)
+    if button == 'A':
+        data['temperature'] = 30.0  # >25
+    elif button == 'B':
+        data['temperature'] = 20.0  # <=25
+    elif button == 'X':
+        data['humidity'] = 10.0  # < 20
+    elif button == 'Y':
+        data['humidity'] = 30.0  # >= 20
+    print(f'Button press data for Button {button}: {data}' )
     ran = True
 
 
 # gets the sensor data from the connected devive on COM_port through callback functions
 def request_sensor_data(iotee):
+    '''Requests sensor data from the iotee device and adds a timestamp to a global dictionary called data. 
+    Each request stores the value of the sensor in a global dictionary called data. 
+    
+    Parameters:
+        iotee (Iotee): iotee object
+        
+    Returns:
+        None 
+    '''
     timestamp = int(time.time())
     print('\n')
     print('time of getting data:', timestamp)
@@ -89,11 +173,19 @@ def request_sensor_data(iotee):
 
 
 ran = False
-button_mode = False
 # main loop for sending data
 def main(button_mode):
+    '''Main loop that starts the iotee thread, connects to the mqtt broker and sends data on a specific topic
+    
+    Parameters:
+        button_mode (bool): a boolean that indicates it the main loop should listen to button presses or send actual 
+                            data autmatically
+                            
+    Returns:
+        None
+    '''
     global ran
-    iotee = start_iotee(config.COM_port) # manually change the COM Port if you have multiple devices
+    iotee = start_iotee(COM_PORT) # manually change the COM Port if you have multiple devices
     signal.signal(signal.SIGINT, lambda signal, frame: signal_handler(signal, frame, iotee))
 
     iotee.on_temperature = on_temperature
@@ -127,4 +219,5 @@ def main(button_mode):
 
 
 if __name__ == '__main__':
-    main(button_mode=True)
+    '''Starts the main loop'''
+    main(button_mode=button_mode)

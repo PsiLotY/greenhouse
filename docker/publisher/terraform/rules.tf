@@ -1,19 +1,19 @@
 resource "aws_iot_topic_rule" "iot_rule" {
   name        = "iot_rule"
-  description = "rule to route all data on sensor_data to detector models, created with terraform"
+  description = "Testing whether the rule works with iotevents, created with terraform"
   enabled     = true
   sql_version = "2016-03-23"
   sql         = "SELECT * FROM 'iot/sensor_data'"
   iot_events {
-    input_name = "window_input"
+    input_name = "device_input"
     role_arn   = aws_iam_role.core_role.arn
   }
   iot_events {
-    input_name = "light_input"
+    input_name = "device_input2"
     role_arn   = aws_iam_role.core_role.arn
   }
   iot_events {
-    input_name = "sprinkler_input"
+    input_name = "device_input3"
     role_arn   = aws_iam_role.core_role.arn
   }
   error_action {
@@ -34,7 +34,7 @@ resource "aws_iot_topic_rule" "timestream_routing" {
     database_name = "sensor_data_db"
     table_name    = "sensor_data_table"
     dimension {
-      name  = "device_id"
+      name  = "deviceId"
       value = uuid()
     }
     role_arn = aws_iam_role.core_role.arn
