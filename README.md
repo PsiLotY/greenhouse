@@ -1,8 +1,8 @@
 # Greenhouse
 
-This is a proof of concept for an IoT-based greenhouse management system using cloud services technologies.
+This is an Internet of Things project which should manage a grennhouse while using the cloud services from AWS. 
 
-The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud platform, where it is monitored and processed.
+The project utilizes IoT sensors to gather real-time data parameters such as temperature, humidity and light intensity. This data is then transmitted to a cloud service, where it is monitored and processed. Afterwards it's sent to different actors which turn on or off based on the message. 
 
 ## Table of Contents
 - [Greenhouse](#greenhouse)
@@ -13,6 +13,7 @@ The project utilizes IoT sensors to gather real-time data parameters such as tem
     - [Terraform State Management with GitLab](#terraform-state-management-with-gitlab)
   - [Run](#run)
   - [Additional Notes](#additional-notes)
+    - [How it works](#how-it-works)
 - [Code Guidelines](#code-guidelines)
   - [Python](#python)
   - [Terraform](#terraform)
@@ -64,6 +65,16 @@ To setup multiple different devices, change the value for `DEVICE_ID` to differe
 
 ## Additional Notes
 The project presentations files, which include the architecture diagram and data-flow diagram can be found in the [GitLab Wiki](https://gitlab.mi.hdm-stuttgart.de/csiot/ss23/greenhouse/-/wikis/home).
+
+### How it works
+Data is beeing sent on the tpic iot/sensor_data.<br>
+There are 3 detector models that are responsible for handling the data to open the windows, turn on the lights and to start the spinklers. 
+
+- window_events: on each input, starts a lambda function that looks into the timestreamfor the day and gets all devices that have published that day. Then gets with a join sql query the five latest timestram entries regarding temperature and the device id and checks if each device id is present with a temperature over 25°C. Depending on the result it sends a message to the iot/sensor_data topic with a special message which can trigger the state transotion.
+- light_events: on each input with a light level above 60 or below 60, start a lambda function which gets each light entry in the timestream which is above the threshold and the one after that. It then calculates the total duration of light beeing above the threshold and if it doesn't exceed 8 hours and if it's past 18 o'clock then the light will be turned on. Depending on the result it sends a message to the iot/sensor_data topic with a special message which can trigger the state transotion.
+- sprinkler_events: It simply transitions to the next state if the value for the humidity is above 20 or below 20. 
+
+All the states of the models have an on enter event, which sends a message to the iot/actor_data topic. This is being picked up by the gateway (receiver.py) and activates different things based on the message. <br>
 
 # Code Guidelines
 
