@@ -11,6 +11,35 @@ except ModuleNotFoundError:
     from lambda_functions.temperature_lambda import query_database, format_temperature_data, get_device_ids, all_present_and_hot, temperature_handler
 
 class TestMyModule(unittest.TestCase):
+    @patch("boto3.client")
+    def test_query_database_equals(self, mock_client):
+        mock_timestream = MagicMock()
+        mock_client.return_value = mock_timestream
+        query = """
+           asfdgasdf
+        """
+        mock_timestream.query.return_value = "mocked response"
+
+        actual_response = query_database(query)
+
+        mock_timestream.query.assert_called_once_with(QueryString=query)
+        self.assertEqual(actual_response, "mocked response")
+
+    @patch("boto3.client")
+    def test_query_database_not_equals(self, mock_client):
+        mock_timestream = MagicMock()
+        mock_client.return_value = mock_timestream
+        query = """
+           asfdgasdf
+        """
+        mock_timestream.query.return_value = "mocked response"
+
+        actual_response = query_database(query)
+
+        mock_timestream.query.assert_called_once_with(QueryString=query)
+        self.assertNotEqual(actual_response, "something else")
+    
+    
     def test_format_temperature_data(self):
         temperature_response = {
             'Rows': [
@@ -26,13 +55,13 @@ class TestMyModule(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_get_device_ids(self):
-        query = {
+        response = {
             'Rows': [
                 {'Data': [{'ScalarValue': '001'}]},
                 {'Data': [{'ScalarValue': '002'}]}
             ]
         }
-        result = get_device_ids(query)
+        result = get_device_ids(response)
         expected_result = ['001', '002']
         self.assertEqual(result, expected_result)
     

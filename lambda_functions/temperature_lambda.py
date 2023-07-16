@@ -2,7 +2,6 @@ import json
 import boto3
 
 client = boto3.client('iot-data', region_name='eu-central-1')
-timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
 
 device_query = """
         SELECT DISTINCT measure_value::varchar 
@@ -35,6 +34,7 @@ def query_database(query):
     Returns:
         response (dict): A dictionary containing the response from the timestream query.
     '''
+    timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
     response = timestream_client.query(QueryString=query)
     return response
     
@@ -64,8 +64,8 @@ def format_temperature_data(temperature_response):
     return result
     
 
-def get_device_ids(query):
-    '''Retrieves a list of unique device IDs the query response passed in.
+def get_device_ids(response):
+    '''Takes a response of unique ids and returns a list of unique device IDs.
 
     Parameters: 
         None
@@ -73,9 +73,8 @@ def get_device_ids(query):
     Returns:
         ids (list): A list of unique device IDs.
     '''
-
     ids = []
-    for entry in query['Rows']:
+    for entry in response['Rows']:
         scalar_value = entry['Data'][0]['ScalarValue']
         ids.append(scalar_value)
     return ids
@@ -135,3 +134,4 @@ def temperature_handler(event, context):
             payload=json.dumps(data)
         )
         return 'not opening windows'
+    
