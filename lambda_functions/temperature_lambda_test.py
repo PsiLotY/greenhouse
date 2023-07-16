@@ -51,6 +51,17 @@ class TestTemperatureLambda(unittest.TestCase):
         mock_timestream.query.assert_called_once_with(QueryString=expected_query)
         self.assertEqual(actual_device_ids, ["device_1", "device_2"])
 
+    @patch("boto3.client")
+    def test_get_device_ids_exception(self, mock_client):
+        mock_timestream = MagicMock()
+        mock_client.return_value = mock_timestream
+        mock_timestream.query.side_effect = Exception("An error occurred")
+
+        with self.assertRaises(Exception) as context:
+            temperature_lambda.get_device_ids()
+
+        self.assertTrue('An error occurred' in str(context.exception))
+
     def test_format_temperature_data(self):
         mock_response = {
             "Rows": [
