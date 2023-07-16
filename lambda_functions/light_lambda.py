@@ -1,23 +1,11 @@
 import json
 import boto3
 from datetime import datetime, time
-from dateutil import tz
+from zoneinfo import ZoneInfo
 
 client = boto3.client('iot-data', region_name='eu-central-1')
-timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
 
-def get_light_data():
-    '''Sends a query to the timestream database gathering all light data from today which value is above 60 and the time
-    from the next row
-    
-    Parameters: 
-        None
-    
-    Returns:
-        response (dict): a dictionary containing the response from the timestream query
-    '''
-    query = """
-        WITH light_above_threshold AS (
+light_query = """WITH light_above_threshold AS (
             SELECT time, measure_value::double
             FROM sensor_data_db.sensor_data_table
             WHERE measure_name = 'light'
@@ -31,9 +19,18 @@ def get_light_data():
         )
         SELECT measure_value::double, time, next_time
         FROM all_rows
-        WHERE measure_value::double > 60
-    """
+        WHERE measure_value::double > 60"""
 
+def query_database(query: str):
+    '''Sends a query to the timestream database
+    
+    Parameters: 
+        query (str): a string containing the query to be sent to the timestream database
+    
+    Returns:
+        response (dict): a dictionary containing the response from the timestream query
+    '''
+    timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
     response = timestream_client.query(QueryString=query)
     return response
 
@@ -104,18 +101,16 @@ def light_handler(event, context):
     message = event
     
     # get current german time
-    utc_time = datetime.utcnow()
-    source_tz = tz.gettz('UTC')
-    target_tz = tz.gettz('Europe/Berlin')
-    current_time = utc_time.replace(tzinfo=source_tz).astimezone(target_tz).time()
-    
+    utc_time = datetime.now(ZoneInfo('UTC'))
+    current_time = utc_time.astimezone(ZoneInfo('Europe/Berlin')).time()
+
     target_time = time(18, 0)
     
-    # checks if the current time is after 19 o'clock and prusumuably the sun is not giving enough light anymore
+    # checks if the current time is after 18 o'clock and prusumuably the sun is not giving enough light anymore
     # the detector model only runs this lambda if current light < 60. 
     # thus no checks for that are needed
     if current_time > target_time:
-        response = get_light_data()
+        response = query_database(light_query)
         total_sunlight_duration = get_sunlight_duration(response)
         evaluate_if_light(total_sunlight_duration, message)
         return "after 6"
