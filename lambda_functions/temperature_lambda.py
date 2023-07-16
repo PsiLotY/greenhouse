@@ -1,18 +1,13 @@
 import json
 import boto3
 
-def get_temperature_data():
-    '''Sends a query to the timestream database to retrieve temperature data for the latest measurements.
+client = boto3.client('iot-data', region_name='eu-central-1')
 
-    Parameters: 
-        None
-    
-    Returns:
-        response (dict): A dictionary containing the response from the timestream query.
-    '''
-    timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
-    query = """
-        SELECT t1.measure_name, t1.time, t1.measure_value::double AS temperature, t2.measure_value::varchar AS device_id
+device_query = """SELECT DISTINCT measure_value::varchar 
+        FROM sensor_data_db."sensor_data_table" 
+        WHERE measure_name='device_id'"""
+
+temperature_query = """SELECT t1.measure_name, t1.time, t1.measure_value::double AS temperature, t2.measure_value::varchar AS device_id
         FROM (
             SELECT measure_name, time, measure_value::double
             FROM sensor_data_db."sensor_data_table"
@@ -24,13 +19,23 @@ def get_temperature_data():
             SELECT measure_name, time, measure_value::varchar
             FROM sensor_data_db."sensor_data_table"
             WHERE measure_name = 'device_id'
-        ) AS t2 ON t1.time = t2.time
-    """
+        ) AS t2 ON t1.time = t2.time"""
+
+def query_database(query):
+    '''Sends a query to the timestream database.
+
+    Parameters: 
+        query (str): The query to be sent to the timestream database.
+    
+    Returns:
+        response (dict): A dictionary containing the response from the timestream query.
+    '''
+    timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
     response = timestream_client.query(QueryString=query)
     return response
     
 def format_temperature_data(temperature_response):
-    '''Formats the temperature data retrieved from the timestream database into a dictionary.
+    '''Formats the temperature data retrieved from the query response passed into a dictionary.
 
     Parameters: 
         temperature_response (dict): A dictionary containing the temperature response from the timestream query.
@@ -55,8 +60,8 @@ def format_temperature_data(temperature_response):
     return result
     
 
-def get_device_ids():
-    '''Retrieves a list of unique device IDs from the timestream database.
+def get_device_ids(response):
+    '''Takes a response of unique ids and returns a list of unique device IDs.
 
     Parameters: 
         None
@@ -64,13 +69,6 @@ def get_device_ids():
     Returns:
         ids (list): A list of unique device IDs.
     '''
-    query = """
-        SELECT DISTINCT measure_value::varchar 
-        FROM sensor_data_db."sensor_data_table" 
-        WHERE measure_name='device_id'
-    """
-    timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
-    response = timestream_client.query(QueryString=query)
     ids = []
     for entry in response['Rows']:
         scalar_value = entry['Data'][0]['ScalarValue']
@@ -110,10 +108,11 @@ def temperature_handler(event, context):
     Returns:
         str: A string indicating whether windows should be opened or not.
     '''
-    client = boto3.client('iot-data', region_name='eu-central-1')
-    device_ids = get_device_ids()
-    response = get_temperature_data()
-    temperature_data = format_temperature_data(response)
+    device_response = query_database(device_query)
+    temperature_response = query_database(temperature_query)
+
+    device_ids = get_device_ids(device_response)
+    temperature_data = format_temperature_data(temperature_response)
     if all_present_and_hot(temperature_data, device_ids):
         data = {"open_windows": True}
         response = client.publish(
@@ -130,3 +129,4 @@ def temperature_handler(event, context):
             payload=json.dumps(data)
         )
         return 'not opening windows'
+    
