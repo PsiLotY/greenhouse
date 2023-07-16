@@ -4,7 +4,9 @@
 
 client/certs/.cert
 client/certs/*Policy*
+client/certs/*.txt
 client/config.py
+
 
 *.pem
 *.key
