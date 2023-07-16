@@ -1,6 +1,7 @@
 import json
 import unittest
 from unittest.mock import patch
+import boto3
 
 
 #the try is needed to have both the scripts and tests working
@@ -59,6 +60,29 @@ class TestLambdaFunctions(unittest.TestCase):
                 mock_publish.reset_mock()
     
     @patch("light_lambda.query_database")
+    def test_query_database(self):
+        client = boto3.client('test-iot-data', region_name='eu-central-1')
+        timestream_client = boto3.client('timestream-query', region_name='eu-central-1')
+        mock_query = """
+            WITH light_above_threshold AS (
+                SELECT time, measure_value::double
+                FROM sensor_data_db.sensor_data_table
+                WHERE measure_name = 'light'
+                    AND time >= DATE_TRUNC('day', NOW())
+            ),
+            all_rows AS (
+                SELECT measure_value::double, time,
+                    LEAD(time) OVER (ORDER BY time ASC) AS next_time,
+                    ROW_NUMBER() OVER (ORDER BY time ASC) AS row_number
+                FROM light_above_threshold
+            )
+            SELECT measure_value::double, time, next_time
+            FROM all_rows
+            WHERE measure_value::double > 60
+        """
+        mock_response = timestream_client.query(QueryString=mock_query)
+    
+
     @patch("light_lambda.get_sunlight_duration")
     @patch("light_lambda.evaluate_if_light")
     def test_light_handler_after_6(self, mock_evaluate_if_light, mock_get_sunlight_duration, mock_query_database):
