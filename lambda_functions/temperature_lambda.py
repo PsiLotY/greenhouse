@@ -3,14 +3,11 @@ import boto3
 
 client = boto3.client('iot-data', region_name='eu-central-1')
 
-device_query = """
-        SELECT DISTINCT measure_value::varchar 
+device_query = """SELECT DISTINCT measure_value::varchar 
         FROM sensor_data_db."sensor_data_table" 
-        WHERE measure_name='device_id'
-    """
+        WHERE measure_name='device_id'"""
 
-temperature_query = """
-        SELECT t1.measure_name, t1.time, t1.measure_value::double AS temperature, t2.measure_value::varchar AS device_id
+temperature_query = """SELECT t1.measure_name, t1.time, t1.measure_value::double AS temperature, t2.measure_value::varchar AS device_id
         FROM (
             SELECT measure_name, time, measure_value::double
             FROM sensor_data_db."sensor_data_table"
@@ -22,8 +19,7 @@ temperature_query = """
             SELECT measure_name, time, measure_value::varchar
             FROM sensor_data_db."sensor_data_table"
             WHERE measure_name = 'device_id'
-        ) AS t2 ON t1.time = t2.time
-    """
+        ) AS t2 ON t1.time = t2.time"""
 
 def query_database(query):
     '''Sends a query to the timestream database.
@@ -116,8 +112,7 @@ def temperature_handler(event, context):
     temperature_response = query_database(temperature_query)
 
     device_ids = get_device_ids(device_response)
-    response = query_database(temperature_response)
-    temperature_data = format_temperature_data(response)
+    temperature_data = format_temperature_data(temperature_response)
     if all_present_and_hot(temperature_data, device_ids):
         data = {"open_windows": True}
         response = client.publish(
