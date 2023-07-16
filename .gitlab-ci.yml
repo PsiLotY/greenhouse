@@ -10,6 +10,7 @@ python:test:
   script:
     - pip install -r client/requirements.txt
     - python -m unittest discover -s client -p "*_test.py"
+    - pip install -r lambda_functions/requirements.txt
     - python -m unittest discover -s lambda_functions -p "*_test.py"
 
 include:
